@@ -45,7 +45,7 @@ export function TestimonialsSection() {
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {testimonials.map((t, i) => (
             <Reveal key={t.name} delay={i * 100}>
-              <figure className="flex h-full flex-col rounded-3xl border border-border bg-card p-7 shadow-sm transition-shadow hover:shadow-lg">
+              <figure className="flex h-full flex-col rounded-3xl border border-border bg-card p-7 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl">
                 <Quote className="h-8 w-8 text-brand/40" />
                 <div className="mt-4 flex gap-1">
                   {Array.from({ length: 5 }).map((_, s) => (

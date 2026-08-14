@@ -39,7 +39,7 @@ export function PromotionsSection() {
 
         {/* Featured promo */}
         <Reveal className="mt-12">
-          <div className="grid overflow-hidden rounded-[2rem] border border-border bg-card shadow-xl lg:grid-cols-2">
+          <div className="grid overflow-hidden rounded-[2rem] border border-border bg-card shadow-xl transition-shadow duration-300 hover:shadow-2xl lg:grid-cols-2">
             <div className="relative min-h-64 lg:min-h-full">
               <Image
                 src="/images/promo-platter.png"
@@ -77,7 +77,7 @@ export function PromotionsSection() {
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {slots.map((slot, i) => (
             <Reveal key={slot.title} delay={i * 100}>
-              <div className="flex h-full flex-col items-start gap-4 rounded-3xl border border-dashed border-brand/40 bg-brand/5 p-7 transition-colors hover:border-brand hover:bg-brand/10">
+              <div className="flex h-full flex-col items-start gap-4 rounded-3xl border border-dashed border-brand/40 bg-brand/5 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-brand hover:bg-brand/10">
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand text-brand-foreground">
                   <slot.icon className="h-6 w-6" />
                 </span>

@@ -65,7 +65,7 @@ export function AboutSection() {
             <div className="mt-10 grid gap-5 sm:grid-cols-3 lg:grid-cols-1 lg:gap-4">
               {pillars.map((pillar, i) => (
                 <Reveal key={pillar.title} delay={i * 100}>
-                  <div className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-lg">
+                  <div className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
                     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand/15 text-brand">
                       <pillar.icon className="h-6 w-6" />
                     </span>

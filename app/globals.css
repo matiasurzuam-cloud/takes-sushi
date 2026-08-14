@@ -210,4 +210,70 @@
   .animate-floaty {
     animation: floaty 6s ease-in-out infinite;
   }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  .animate-fade-in {
+    animation: fade-in 1s ease-out both;
+  }
+
+  @keyframes kenburns {
+    0% {
+      transform: scale(1.08) translate(0, 0);
+    }
+    100% {
+      transform: scale(1.18) translate(-1%, -1%);
+    }
+  }
+  .animate-kenburns {
+    animation: kenburns 16s ease-out infinite alternate;
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.85;
+      transform: scale(1.04);
+    }
+  }
+  .animate-pulse-soft {
+    animation: pulse-soft 2.4s ease-in-out infinite;
+  }
+
+  @keyframes bounce-y {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(8px);
+    }
+  }
+  .animate-bounce-y {
+    animation: bounce-y 2s ease-in-out infinite;
+  }
 }

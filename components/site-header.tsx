@@ -35,7 +35,7 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        'fixed inset-x-0 top-0 z-50 transition-all duration-300',
+        'animate-fade-in fixed inset-x-0 top-0 z-50 transition-all duration-300',
         scrolled
           ? 'border-b border-border/60 bg-background/85 py-2 shadow-[0_8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl'
           : 'border-b border-transparent bg-transparent py-4',
