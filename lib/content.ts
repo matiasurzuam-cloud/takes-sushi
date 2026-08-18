@@ -165,20 +165,41 @@ function mapResena(row: ResenaRow): Resena {
   }
 }
 
+// `app/page.tsx`, `app/eventos/page.tsx`, `app/reservas/page.tsx` y
+// `app/club-takes/page.tsx` llaman esto en build time (ISR/SSG) — usa
+// `allSettled` en vez de `Promise.all` a propósito: si Supabase no responde
+// (URL mal configurada, caída temporal), una tabla fallando no debe tumbar
+// las otras ni el build entero. Cada sección ya tiene su estado vacío
+// elegante para cuando no hay datos, así que degradarse a eso es preferible
+// a un 500 en todo el sitio.
 export async function getContent(): Promise<SiteContent> {
-  const [galeriaRes, resenasRes, configRes] = await Promise.all([
+  const [galeriaRes, resenasRes, configRes] = await Promise.allSettled([
     supabaseAdmin.from('galeria').select('*').eq('activo', true).order('orden'),
     supabaseAdmin.from('resenas').select('*').eq('activo', true).order('orden'),
     supabaseAdmin.from('site_config').select('*'),
   ])
 
+  if (galeriaRes.status === 'rejected') {
+    console.error('getContent: falló la consulta a galeria:', galeriaRes.reason)
+  }
+  if (resenasRes.status === 'rejected') {
+    console.error('getContent: falló la consulta a resenas:', resenasRes.reason)
+  }
+  if (configRes.status === 'rejected') {
+    console.error('getContent: falló la consulta a site_config:', configRes.reason)
+  }
+
+  const galeriaData = galeriaRes.status === 'fulfilled' ? galeriaRes.value.data : null
+  const resenasData = resenasRes.status === 'fulfilled' ? resenasRes.value.data : null
+  const configData = configRes.status === 'fulfilled' ? configRes.value.data : null
+
   const configById = new Map(
-    (configRes.data ?? []).map((row: { id: string; data: unknown }) => [row.id, row.data]),
+    (configData ?? []).map((row: { id: string; data: unknown }) => [row.id, row.data]),
   )
 
   return {
-    galeria: ((galeriaRes.data ?? []) as FotoRow[]).map(mapFoto),
-    resenas: ((resenasRes.data ?? []) as ResenaRow[]).map(mapResena),
+    galeria: ((galeriaData ?? []) as FotoRow[]).map(mapFoto),
+    resenas: ((resenasData ?? []) as ResenaRow[]).map(mapResena),
     confianza: { ...DEFAULT_CONFIANZA, ...(configById.get('confianza') as Partial<Confianza>) },
     contacto: { ...DEFAULT_CONTACTO, ...(configById.get('contacto') as Partial<ContactoInfo>) },
     clubBeneficios: {

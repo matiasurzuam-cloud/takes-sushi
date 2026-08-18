@@ -13,6 +13,10 @@ export const metadata: Metadata = {
     'Reserva tu mesa en TAKE\'S para cumpleaños, eventos de empresa, after office, reuniones y desayunos.',
 }
 
+// Sin esto quedaba 100% estática (sin `revalidate` ni `dynamic`, Next la
+// trata como SSG puro) — nunca se habría refrescado tras el primer build.
+export const revalidate = 60
+
 export default async function ReservasPage() {
   const content = await getContent()
 

@@ -16,6 +16,10 @@ export const metadata: Metadata = {
 // al Club" del banner de la home pasa a apuntar directo ahí (ver
 // components/club-beneficios-section.tsx) y esta página deja de ser el
 // destino, sin que haga falta borrarla.
+// Sin esto quedaba 100% estática (sin `revalidate` ni `dynamic`, Next la
+// trata como SSG puro) — nunca se habría refrescado tras el primer build.
+export const revalidate = 60
+
 export default async function ClubTakesPage() {
   const content = await getContent()
   const whatsappHref = `https://wa.me/${content.contacto.redes.whatsapp}`

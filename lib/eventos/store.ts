@@ -87,31 +87,45 @@ class SupabaseEventosRepository implements EventosRepository {
 
   // Usado por el catálogo público y la vista previa del home: solo eventos
   // activos cuya fecha no haya pasado, ordenados del más próximo al más lejano.
+  // `app/eventos/page.tsx` corre esto en build time (ISR) — si Supabase no
+  // responde (URL mal configurada, caída temporal), no puede tumbar el
+  // build entero: se degrada a "sin eventos" en vez de un 500.
   async getProximos() {
-    const { dateISO: hoy } = getSantiagoParts(new Date())
-    const { data, error } = await supabaseAdmin
-      .from(TABLE)
-      .select('*')
-      .eq('activo', true)
-      .gte('fecha', hoy)
-      .order('fecha')
-    if (error) throw error
-    return (data as EventoRow[]).map(fromRow)
+    try {
+      const { dateISO: hoy } = getSantiagoParts(new Date())
+      const { data, error } = await supabaseAdmin
+        .from(TABLE)
+        .select('*')
+        .eq('activo', true)
+        .gte('fecha', hoy)
+        .order('fecha')
+      if (error) throw error
+      return (data as EventoRow[]).map(fromRow)
+    } catch (err) {
+      console.error('eventosRepo.getProximos falló, se muestra como si no hubiera eventos:', err)
+      return []
+    }
   }
 
   // Recap de eventos ya realizados: activos, con fecha pasada, del más
   // reciente al más antiguo — misma tabla, solo cambia el filtro de fecha.
+  // Mismo motivo que getProximos: nunca debe tumbar el build.
   async getPasados() {
-    const { dateISO: hoy } = getSantiagoParts(new Date())
-    const { data, error } = await supabaseAdmin
-      .from(TABLE)
-      .select('*')
-      .eq('activo', true)
-      .lt('fecha', hoy)
-      .order('fecha', { ascending: false })
-      .limit(MAX_PASADOS)
-    if (error) throw error
-    return (data as EventoRow[]).map(fromRow)
+    try {
+      const { dateISO: hoy } = getSantiagoParts(new Date())
+      const { data, error } = await supabaseAdmin
+        .from(TABLE)
+        .select('*')
+        .eq('activo', true)
+        .lt('fecha', hoy)
+        .order('fecha', { ascending: false })
+        .limit(MAX_PASADOS)
+      if (error) throw error
+      return (data as EventoRow[]).map(fromRow)
+    } catch (err) {
+      console.error('eventosRepo.getPasados falló, se omite el recap:', err)
+      return []
+    }
   }
 
   async create(input: EventoInput) {
