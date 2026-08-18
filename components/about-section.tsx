@@ -29,7 +29,7 @@ export function AboutSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <Reveal className="relative">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-2xl">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-2xl">
               <Image
                 src="/images/about-chef.png"
                 alt="Chef de TAKE'S preparando sushi fresco"
@@ -47,13 +47,11 @@ export function AboutSection() {
 
           <div>
             <Reveal>
-              <span className="text-sm font-bold uppercase tracking-[0.25em] text-accent">
-                Nosotros
-              </span>
-              <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight text-foreground sm:text-4xl lg:text-5xl">
+              <span className="text-eyebrow">Nosotros</span>
+              <h2 className="text-h2 mt-3">
                 Pasión por el sushi, amor por el detalle
               </h2>
-              <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+              <p className="text-lead mt-5">
                 En TAKE&apos;S creemos que comer bien es una experiencia
                 completa. Cada roll se prepara con cuidado, combinando sabores
                 frescos y presentaciones que enamoran. Y porque sabemos que un

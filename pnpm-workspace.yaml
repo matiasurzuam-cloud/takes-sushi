@@ -1,0 +1,5 @@
+allowBuilds:
+  # msw solo llega como dependencia transitiva de shadcn (CLI de scaffolding,
+  # no corre en runtime) — no hace falta su script de instalación acá.
+  msw: false
+  sharp: true

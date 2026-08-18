@@ -18,6 +18,13 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40',
         link: 'text-primary underline-offset-4 hover:underline',
+        // CTAs de marketing (hero, header, promociones, pop-up): pill con la
+        // sombra de marca, para usar con size="pill"/"pill-sm"/"pill-lg".
+        brand:
+          'bg-brand text-brand-foreground shadow-lg shadow-brand/25 hover:-translate-y-0.5 hover:shadow-brand/40',
+        // Variante para CTAs secundarios sobre fondos oscuros (ej. hero).
+        'brand-outline':
+          'border-white/25 bg-white/5 text-white backdrop-blur-sm hover:-translate-y-0.5 hover:bg-white/15',
       },
       size: {
         default:
@@ -31,6 +38,12 @@ const buttonVariants = cva(
         'icon-sm':
           'size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg',
         'icon-lg': 'size-9',
+        // Tamaños "pill" para CTAs grandes (marketing + acciones primarias
+        // del admin). `h-auto` porque el alto lo define el padding, no una
+        // altura fija como en los tamaños compactos de arriba.
+        'pill-sm': 'h-auto gap-1.5 rounded-full px-4 py-2 text-xs font-semibold sm:text-sm',
+        pill: 'h-auto gap-1.5 rounded-full px-7 py-3 text-sm font-semibold',
+        'pill-lg': 'h-auto gap-1.5 rounded-full px-8 py-3.5 text-base font-semibold',
       },
     },
     defaultVariants: {

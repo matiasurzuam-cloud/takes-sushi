@@ -1,96 +1,83 @@
-import Image from 'next/image'
-import { Tag, Gift, CalendarDays } from 'lucide-react'
+'use client'
+
+import { Gift } from 'lucide-react'
 import { Reveal } from '@/components/reveal'
+import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
+import { SmartImage } from '@/components/ui/smart-image'
+import { PromoCountdown } from '@/components/promo-popup/promo-countdown'
+import { usePromosVigentes } from '@/components/promo-popup/use-promos-vigentes'
+import type { SiteContent } from '@/lib/content'
 
-const slots = [
-  {
-    icon: Gift,
-    title: 'Combo para compartir',
-    hint: 'Espacio reservado para tu promoción destacada.',
-  },
-  {
-    icon: CalendarDays,
-    title: 'Promo del día',
-    hint: 'Aquí podrás mostrar ofertas por día de la semana.',
-  },
-  {
-    icon: Tag,
-    title: 'Descuentos especiales',
-    hint: 'Reservado para cupones y precios especiales.',
-  },
-]
+export function PromotionsSection({ content }: { content: SiteContent }) {
+  const { promos } = usePromosVigentes()
+  const { contacto } = content
+  const instagramHref = contacto.redes.instagram || `https://wa.me/${contacto.redes.whatsapp}`
 
-export function PromotionsSection() {
   return (
     <section id="promociones" className="relative py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <span className="text-sm font-bold uppercase tracking-[0.25em] text-accent">
-            Promociones
-          </span>
-          <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight text-foreground sm:text-4xl lg:text-5xl">
-            Ofertas que vas a amar
-          </h2>
-          <p className="mt-4 text-pretty text-base leading-relaxed text-muted-foreground">
-            Esta sección está lista para recibir tus promociones reales. Aquí
-            destacaremos combos, descuentos y ofertas por temporada.
+          <span className="text-eyebrow">Promociones</span>
+          <h2 className="text-h2 mt-3">Ofertas que vas a amar</h2>
+          <p className="text-lead mt-4">
+            Combos, descuentos y ofertas por temporada, directo desde la cocina.
           </p>
         </Reveal>
 
-        {/* Featured promo */}
-        <Reveal className="mt-12">
-          <div className="grid overflow-hidden rounded-[2rem] border border-border bg-card shadow-xl transition-shadow duration-300 hover:shadow-2xl lg:grid-cols-2">
-            <div className="relative min-h-64 lg:min-h-full">
-              <Image
-                src="/images/promo-platter.png"
-                alt="Tabla de sushi para compartir"
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              <span className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-accent px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-accent-foreground shadow-lg">
-                Destacado
-              </span>
-            </div>
-            <div className="flex flex-col justify-center gap-5 p-8 sm:p-12">
-              <h3 className="text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">
-                Tu promoción principal aquí
-              </h3>
-              <p className="text-pretty text-base leading-relaxed text-muted-foreground">
-                Reemplaza este bloque con tu oferta estrella: una tabla para
-                compartir, un combo del día o el descuento que quieras destacar.
-                El diseño se adapta automáticamente a tu contenido.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <span className="inline-flex items-center justify-center rounded-full bg-brand px-7 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/25">
-                  Pedir promo
-                </span>
-                <span className="inline-flex items-center justify-center rounded-full border border-border px-7 py-3 text-sm font-semibold text-foreground">
-                  Ver condiciones
-                </span>
-              </div>
-            </div>
+        {promos === null ? (
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="h-80 animate-pulse rounded-3xl bg-muted" />
+            ))}
           </div>
-        </Reveal>
-
-        {/* Promo slots */}
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {slots.map((slot, i) => (
-            <Reveal key={slot.title} delay={i * 100}>
-              <div className="flex h-full flex-col items-start gap-4 rounded-3xl border border-dashed border-brand/40 bg-brand/5 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-brand hover:bg-brand/10">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand text-brand-foreground">
-                  <slot.icon className="h-6 w-6" />
-                </span>
-                <h3 className="text-lg font-bold text-foreground">
-                  {slot.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {slot.hint}
-                </p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+        ) : promos.length === 0 ? (
+          <Reveal className="mt-12">
+            <EmptyState
+              icon={Gift}
+              title="Todavía no hay promos vigentes"
+              description="Estamos preparando descuentos y combos especiales. Síguenos en Instagram para enterarte apenas salgan."
+              ctaLabel="Síguenos en Instagram"
+              ctaHref={instagramHref}
+            />
+          </Reveal>
+        ) : (
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {promos.map((promo, i) => (
+              <Reveal key={promo.id} delay={i * 80}>
+                <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                  <div className="relative h-48 w-full">
+                    <SmartImage
+                      src={promo.imagenes[0] || '/placeholder.svg'}
+                      alt={promo.titulo}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col gap-3 p-6">
+                    <h3 className="text-h3">{promo.titulo}</h3>
+                    <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
+                      {promo.descripcion}
+                    </p>
+                    {promo.fechaExpiracion && <PromoCountdown fechaExpiracion={promo.fechaExpiracion} />}
+                    {promo.link && (
+                      <Button
+                        variant="brand"
+                        size="pill"
+                        className="mt-1 w-fit"
+                        nativeButton={false}
+                        render={<a href={promo.link} />}
+                      >
+                        Ver más
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

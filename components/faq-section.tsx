@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     q: '¿Hacen delivery?',
-    a: 'Estamos preparando nuestro sistema de pedidos y delivery. La estructura del sitio ya está pensada para incorporar pagos y entregas más adelante.',
+    a: 'Sí, hacemos delivery. El precio varía según la ubicación — escríbenos por WhatsApp con tu dirección y te confirmamos el costo y el tiempo de entrega.',
   },
   {
     q: '¿El café es de especialidad?',
@@ -35,12 +35,8 @@ export function FaqSection() {
     <section id="faq" className="relative bg-secondary/40 py-20 sm:py-28">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <Reveal className="text-center">
-          <span className="text-sm font-bold uppercase tracking-[0.25em] text-accent">
-            Preguntas frecuentes
-          </span>
-          <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight text-foreground sm:text-4xl lg:text-5xl">
-            Resolvemos tus dudas
-          </h2>
+          <span className="text-eyebrow">Preguntas frecuentes</span>
+          <h2 className="text-h2 mt-3">Resolvemos tus dudas</h2>
         </Reveal>
 
         <div className="mt-12 space-y-4">

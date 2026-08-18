@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { SmartImage } from '@/components/ui/smart-image'
 
 // Un `Promo` mapea 1:1 a un futuro documento de la colección Appwrite
 // "promotions" (campos: imageUrl, badge, title, subtitle, ctaText,
@@ -70,20 +71,20 @@ export function PromoBanner({
         className="relative aspect-square"
       >
         {/* Soft ambient glow */}
-        <div className="absolute -inset-5 rounded-[2.5rem] bg-brand/30 blur-2xl animate-pulse-soft" />
+        <div className="absolute -inset-5 rounded-4xl bg-brand/30 blur-2xl animate-pulse-soft" />
 
         {/* Rotating conic-gradient border */}
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 7, repeat: Infinity, ease: 'linear' }}
-          className="absolute -inset-[2px] rounded-[2rem] bg-[conic-gradient(from_0deg,var(--brand),var(--accent-orange),transparent_45%,var(--brand))] opacity-90"
+          className="absolute -inset-[2px] rounded-3xl bg-[conic-gradient(from_0deg,var(--brand),var(--accent-orange),transparent_45%,var(--brand))] opacity-90"
         />
 
         {/* Glass card */}
         <motion.div
           whileHover={{ scale: 1.03 }}
           transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-          className="group relative h-full w-full overflow-hidden rounded-[2rem] border border-white/20 bg-white/10 shadow-2xl shadow-brand/25 backdrop-blur-xl"
+          className="group relative h-full w-full overflow-hidden rounded-3xl border border-white/20 bg-white/10 shadow-2xl shadow-brand/25 backdrop-blur-xl"
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -94,7 +95,7 @@ export function PromoBanner({
               transition={{ duration: 0.6 }}
               className="absolute inset-0"
             >
-              <Image
+              <SmartImage
                 src={promo.imageUrl || '/placeholder.svg'}
                 alt={promo.title}
                 fill
@@ -122,13 +123,16 @@ export function PromoBanner({
             )}
             <div className="mt-2 flex items-center justify-between gap-3">
               {promo.ctaLink && (
-                <a
-                  href={promo.ctaLink}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-xs font-semibold text-brand-foreground shadow-lg shadow-brand/40 transition-transform group-hover:translate-x-0.5 sm:text-sm"
+                <Button
+                  variant="brand"
+                  size="pill-sm"
+                  className="shadow-brand/40 group-hover:translate-x-0.5"
+                  nativeButton={false}
+                  render={<a href={promo.ctaLink} />}
                 >
                   {promo.ctaText ?? 'Ver más'}
                   <ArrowRight className="h-3.5 w-3.5" />
-                </a>
+                </Button>
               )}
               {promo.price && (
                 <span className="text-2xl font-extrabold text-brand">

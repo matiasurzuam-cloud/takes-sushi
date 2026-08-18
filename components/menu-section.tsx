@@ -5,8 +5,7 @@ import Image from 'next/image'
 import { Leaf, Flame, Plus, Minus, ShoppingBag, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Reveal } from '@/components/reveal'
-
-const WHATSAPP_NUMBER = '56933327395'
+import { Button } from '@/components/ui/button'
 
 type MenuItem = {
   name: string
@@ -1207,7 +1206,7 @@ type CartEntry = {
   qty: number
 }
 
-export function MenuSection() {
+export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
   const [active, setActive] = useState(categories[0].id)
   const [cart, setCart] = useState<Record<string, CartEntry>>({})
   const current = categories.find((c) => c.id === active) ?? categories[0]
@@ -1265,7 +1264,7 @@ export function MenuSection() {
     lines.push(`*Total (${totalItems} ${totalItems === 1 ? 'producto' : 'productos'}): ${formatPrice(totalPrice)}*`)
 
     const message = encodeURIComponent(lines.join('\n'))
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank')
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank')
   }
 
   return (
@@ -1275,13 +1274,9 @@ export function MenuSection() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <span className="text-sm font-bold uppercase tracking-[0.25em] text-accent">
-            Nuestra carta
-          </span>
-          <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight text-foreground sm:text-4xl lg:text-5xl">
-            Explora nuestro menú
-          </h2>
-          <p className="mt-4 text-pretty text-base leading-relaxed text-muted-foreground">
+          <span className="text-eyebrow">Nuestra carta</span>
+          <h2 className="text-h2 mt-3">Explora nuestro menú</h2>
+          <p className="text-lead mt-4">
             Sushi preparado al momento, café de especialidad, tostones, sandwiches y
             coctelería. Elige una categoría y descubre todo lo que tenemos para ti.
           </p>
@@ -1365,13 +1360,9 @@ export function MenuSection() {
             >
               <X className="h-5 w-5" />
             </button>
-            <button
-              type="button"
-              onClick={sendOrder}
-              className="shrink-0 rounded-full bg-brand px-5 py-3 text-sm font-bold text-brand-foreground shadow-lg shadow-brand/25 transition-colors hover:bg-brand/85 sm:px-7"
-            >
+            <Button variant="brand" size="pill" onClick={sendOrder} className="shrink-0">
               Realizar Pedido
-            </button>
+            </Button>
           </div>
         </div>
       )}

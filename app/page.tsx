@@ -6,24 +6,36 @@ import { PromotionsSection } from '@/components/promotions-section'
 import { GallerySection } from '@/components/gallery-section'
 import { TestimonialsSection } from '@/components/testimonials-section'
 import { FaqSection } from '@/components/faq-section'
+import { ClubBeneficiosSection } from '@/components/club-beneficios-section'
 import { ContactSection } from '@/components/contact-section'
 import { SiteFooter } from '@/components/site-footer'
+import { getContent } from '@/lib/content'
 
-export default function Home() {
+// El contenido viene de Supabase (tablas galeria/resenas/site_config) y se
+// edita fuera de este código (Supabase Studio) — sin esto, Next dejaría la
+// home 100% estática con los datos congelados desde el último build.
+// (Promociones no depende de esto: PromotionsSection las trae en vivo del
+// lado del cliente, ver components/promo-popup/use-promos-vigentes.ts.)
+export const revalidate = 60
+
+export default async function Home() {
+  const content = await getContent()
+
   return (
     <>
       <SiteHeader />
       <main>
-        <HeroSection />
+        <HeroSection content={content} />
         <AboutSection />
-        <MenuSection />
-        <PromotionsSection />
-        <GallerySection />
-        <TestimonialsSection />
+        <MenuSection whatsappNumber={content.contacto.redes.whatsapp} />
+        <PromotionsSection content={content} />
+        <GallerySection content={content} />
+        <TestimonialsSection content={content} />
         <FaqSection />
-        <ContactSection />
+        <ClubBeneficiosSection content={content} />
+        <ContactSection content={content} />
       </main>
-      <SiteFooter />
+      <SiteFooter content={content} />
     </>
   )
 }

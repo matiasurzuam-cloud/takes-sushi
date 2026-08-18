@@ -4,14 +4,22 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
+// Los anchors llevan el prefijo "/" (ej. "/#nosotros" en vez de "#nosotros")
+// porque el header aparece en páginas propias como /eventos o /reservas,
+// no solo en la home — sin el "/" el link intentaría saltar a un id que
+// no existe en esa página en vez de volver a la home y bajar hasta ahí.
 const navLinks = [
-  { label: 'Nosotros', href: '#nosotros' },
-  { label: 'Carta', href: '#carta' },
-  { label: 'Promociones', href: '#promociones' },
-  { label: 'Galería', href: '#galeria' },
-  { label: 'Opiniones', href: '#opiniones' },
-  { label: 'Contacto', href: '#contacto' },
+  { label: 'Nosotros', href: '/#nosotros' },
+  { label: 'Carta', href: '/#carta' },
+  { label: 'Promociones', href: '/#promociones' },
+  { label: 'Eventos', href: '/eventos' },
+  { label: 'Reservas', href: '/reservas' },
+  { label: 'Club Takes', href: '/club-takes' },
+  { label: 'Galería', href: '/#galeria' },
+  { label: 'Opiniones', href: '/#opiniones' },
+  { label: 'Contacto', href: '/#contacto' },
 ]
 
 export function SiteHeader() {
@@ -42,7 +50,10 @@ export function SiteHeader() {
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <a href="#inicio" className="flex items-center gap-3">
+        {/* Nombre de marca: TAKE'S en mayúsculas como wordmark (logo, título,
+            footer). "Take's" en caja natural queda reservado para nombres de
+            producto en la carta (ej. "Shirashi Take's") — no mezclar. */}
+        <a href="/#inicio" className="flex items-center gap-3">
           <span className="relative block h-11 w-11 overflow-hidden rounded-full ring-2 ring-brand/30 sm:h-12 sm:w-12">
             <Image
               src="/images/logo.jpg"
@@ -63,12 +74,12 @@ export function SiteHeader() {
           </span>
         </a>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-0.5 xl:gap-1 lg:flex">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-brand/10 hover:text-foreground"
+              className="whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-brand/10 hover:text-foreground xl:px-4"
             >
               {link.label}
             </a>
@@ -76,12 +87,9 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden lg:block">
-          <a
-            href="#contacto"
-            className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/25 transition-all hover:-translate-y-0.5 hover:shadow-brand/40"
-          >
+          <Button variant="brand" size="pill" nativeButton={false} render={<a href="/#contacto" />}>
             Hacer pedido
-          </a>
+          </Button>
         </div>
 
         <button
@@ -113,13 +121,15 @@ export function SiteHeader() {
               {link.label}
             </a>
           ))}
-          <a
-            href="#contacto"
-            onClick={() => setOpen(false)}
-            className="mt-2 inline-flex items-center justify-center rounded-xl bg-brand px-6 py-3 text-base font-semibold text-brand-foreground shadow-lg shadow-brand/25"
+          <Button
+            variant="brand"
+            size="pill"
+            className="mt-2"
+            nativeButton={false}
+            render={<a href="/#contacto" onClick={() => setOpen(false)} />}
           >
             Hacer pedido
-          </a>
+          </Button>
         </nav>
       </div>
     </header>
