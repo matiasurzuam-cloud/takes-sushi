@@ -6,17 +6,28 @@ import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { SmartImage } from '@/components/ui/smart-image'
+import { ResenasCarousel } from '@/components/resenas-carousel'
 import { formatFechaRelativa } from '@/lib/relative-date'
 import type { FuenteResena, SiteContent } from '@/lib/content'
 
-// Captura de reseñas (ej. la ficha de Google) como archivo estático del
-// proyecto — a propósito NO pasa por Supabase: se reemplaza directo en
-// public/ (mismo criterio que hero-sushi.png/about-chef.png) y queda
-// permanente en el sitio. `existsSync` corre en el servidor (este
-// componente no lleva 'use client'), así que mientras no exista el
-// archivo, esta tarjeta simplemente no se muestra — no rompe el build.
-const RESENAS_IMAGEN = '/reseña-hero.png'
-const tieneCapturaResenas = existsSync(join(process.cwd(), 'public', RESENAS_IMAGEN))
+// Capturas de reseñas (ej. la ficha de Google) como archivos estáticos del
+// proyecto — a propósito NO pasan por Supabase: se agregan directo en
+// public/ (mismo criterio que hero-sushi.png/about-chef.png) y quedan
+// permanentes en el sitio. Lista fija de nombres candidatos (no hace falta
+// tocar código para sumar una nueva: solo agregar el archivo con el
+// siguiente nombre de la lista) — `existsSync` corre en el servidor (este
+// componente no lleva 'use client'), así que las que no existan
+// simplemente no aparecen, sin romper el build.
+const RESENAS_IMAGENES_CANDIDATAS = [
+  '/reseña-hero.png',
+  '/reseña-2.png',
+  '/reseña-3.png',
+  '/reseña-4.png',
+  '/reseña-5.png',
+]
+const resenasImagenes = RESENAS_IMAGENES_CANDIDATAS.filter((src) =>
+  existsSync(join(process.cwd(), 'public', src)),
+)
 
 // Logo oficial de Google (4 colores) — se usa como badge de "fuente" en
 // cada reseña, igual que hacen los sitios de reserva/reviews.
@@ -203,28 +214,9 @@ export function TestimonialsSection({ content }: { content: SiteContent }) {
 
         <RatingSummary content={content} />
 
-        {tieneCapturaResenas ? (
+        {resenasImagenes.length > 0 ? (
           <Reveal className="mx-auto mt-12 max-w-xl">
-            {/* Sin fill/altura fija: la tarjeta se adapta a la proporción
-                real de la captura (h-auto), sin espacios vacíos alrededor.
-                El borde grueso + el brillo de fondo rompen el look de
-                "screenshot pegado" en vez de solo redondear esquinas. */}
-            <div className="relative">
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -inset-3 rounded-[2.5rem] bg-gradient-to-br from-brand/30 via-accent/20 to-brand/30 blur-xl"
-              />
-              <div className="relative overflow-hidden rounded-[2rem] border-4 border-background shadow-2xl ring-1 ring-border">
-                <SmartImage
-                  src={RESENAS_IMAGEN}
-                  alt="Reseñas de TAKE'S en Google"
-                  width={1125}
-                  height={754}
-                  className="h-auto w-full"
-                  sizes="(max-width: 640px) 100vw, 36rem"
-                />
-              </div>
-            </div>
+            <ResenasCarousel imagenes={resenasImagenes} />
           </Reveal>
         ) : resenas.length === 0 ? (
           <Reveal className="mt-12">
