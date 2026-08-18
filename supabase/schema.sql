@@ -130,15 +130,13 @@ insert into public.site_config (id, data) values
   ('contacto', '{
     "direccion": [],
     "horario": [
-      "Lunes y martes: 13:00 - 22:30",
-      "Miércoles a viernes: 13:00 - 23:00",
-      "Sábado: 17:30 - 23:00",
+      "Lunes a viernes: 09:00 - 23:00",
+      "Sábado: 11:00 - 23:00",
       "Domingo: cerrado"
     ],
     "horarioSemanal": [
-      {"dias": [1, 2], "abre": "13:00", "cierra": "22:30"},
-      {"dias": [3, 4, 5], "abre": "13:00", "cierra": "23:00"},
-      {"dias": [6], "abre": "17:30", "cierra": "23:00"}
+      {"dias": [1, 2, 3, 4, 5], "abre": "09:00", "cierra": "23:00"},
+      {"dias": [6], "abre": "11:00", "cierra": "23:00"}
     ],
     "telefono": "",
     "redes": {
