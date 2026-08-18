@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from './env'
 
 // Cliente ligado a las cookies de la request actual — es el que usan las
 // rutas de login/logout para crear y cerrar la sesión de Supabase Auth, y
@@ -10,8 +11,8 @@ export async function createClient() {
   const cookieStore = await cookies()
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
