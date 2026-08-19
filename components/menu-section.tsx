@@ -1206,9 +1206,167 @@ type CartEntry = {
   qty: number
 }
 
+type DeliveryMethod = 'retiro' | 'delivery'
+
+const SECTORES_DELIVERY = [
+  { id: 'molina-urbano', label: 'Molina Urbano', price: 1000 },
+  { id: 'casa-blanca', label: 'Casa Blanca', price: 4000 },
+  { id: 'pichingal', label: 'Pichingal', price: 6000 },
+  { id: 'cerrillo-bascunan', label: 'Cerrillo Bascuñán', price: 7000 },
+  { id: 'bajo-los-romeros', label: 'Bajo Los Romeros', price: 6000 },
+  { id: 'san-jorge-de-romeral', label: 'San Jorge de Romeral', price: 9000 },
+]
+
+function CheckoutModal({
+  open,
+  onClose,
+  totalItems,
+  totalPrice,
+  deliveryMethod,
+  onSelectMethod,
+  sectorId,
+  onSelectSector,
+  onConfirm,
+}: {
+  open: boolean
+  onClose: () => void
+  totalItems: number
+  totalPrice: number
+  deliveryMethod: DeliveryMethod | null
+  onSelectMethod: (method: DeliveryMethod) => void
+  sectorId: string | null
+  onSelectSector: (id: string) => void
+  onConfirm: () => void
+}) {
+  if (!open) return null
+
+  const selectedSector = SECTORES_DELIVERY.find((s) => s.id === sectorId) ?? null
+  const deliveryFee = deliveryMethod === 'delivery' && selectedSector ? selectedSector.price : 0
+  const grandTotal = totalPrice + deliveryFee
+  const canConfirm = deliveryMethod === 'retiro' || (deliveryMethod === 'delivery' && selectedSector !== null)
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Elige cómo quieres recibir tu pedido"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-2xl sm:p-8"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Cerrar"
+          className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        <h3 className="text-center text-xl font-extrabold text-foreground sm:text-2xl">
+          ¿Retiro o delivery?
+        </h3>
+        <p className="mt-2 text-center text-sm text-muted-foreground">
+          Elige cómo quieres recibir tu pedido.
+        </p>
+
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => onSelectMethod('retiro')}
+            className={cn(
+              'rounded-2xl border-2 p-4 text-center transition-all duration-200',
+              deliveryMethod === 'retiro'
+                ? 'border-brand bg-brand/10'
+                : 'border-border bg-secondary/40 hover:border-brand/40',
+            )}
+          >
+            <span className="block text-sm font-extrabold text-foreground">Retiro en local</span>
+            <span className="mt-1 block text-xs text-muted-foreground">Sin costo adicional</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onSelectMethod('delivery')}
+            className={cn(
+              'rounded-2xl border-2 p-4 text-center transition-all duration-200',
+              deliveryMethod === 'delivery'
+                ? 'border-brand bg-brand/10'
+                : 'border-border bg-secondary/40 hover:border-brand/40',
+            )}
+          >
+            <span className="block text-sm font-extrabold text-foreground">Delivery</span>
+            <span className="mt-1 block text-xs text-muted-foreground">Según tu sector</span>
+          </button>
+        </div>
+
+        {deliveryMethod === 'delivery' && (
+          <div className="mt-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Elige tu sector
+            </p>
+            <div className="mt-3 flex flex-col gap-2">
+              {SECTORES_DELIVERY.map((sector) => (
+                <button
+                  key={sector.id}
+                  type="button"
+                  onClick={() => onSelectSector(sector.id)}
+                  className={cn(
+                    'flex items-center justify-between rounded-xl border-2 px-4 py-2.5 text-left text-sm transition-all duration-200',
+                    sectorId === sector.id
+                      ? 'border-brand bg-brand/10 text-foreground'
+                      : 'border-border bg-secondary/40 text-muted-foreground hover:border-brand/40',
+                  )}
+                >
+                  <span className="font-semibold">{sector.label}</span>
+                  <span className="font-bold text-brand">{formatPrice(sector.price)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-6 space-y-1 rounded-2xl bg-secondary/40 p-4">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>
+              {totalItems} {totalItems === 1 ? 'producto' : 'productos'}
+            </span>
+            <span>{formatPrice(totalPrice)}</span>
+          </div>
+          {deliveryMethod === 'delivery' && (
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>Delivery{selectedSector ? ` · ${selectedSector.label}` : ''}</span>
+              <span>{selectedSector ? formatPrice(selectedSector.price) : '—'}</span>
+            </div>
+          )}
+          <div className="flex items-center justify-between pt-1 text-base font-extrabold text-foreground">
+            <span>Total</span>
+            <span>{formatPrice(grandTotal)}</span>
+          </div>
+        </div>
+
+        <Button
+          variant="brand"
+          size="pill-lg"
+          onClick={onConfirm}
+          disabled={!canConfirm}
+          className="mt-6 w-full disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Confirmar y enviar por WhatsApp
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
   const [active, setActive] = useState(categories[0].id)
   const [cart, setCart] = useState<Record<string, CartEntry>>({})
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null)
+  const [sectorId, setSectorId] = useState<string | null>(null)
   const current = categories.find((c) => c.id === active) ?? categories[0]
 
   const getQty = (id: string) => cart[id]?.qty ?? 0
@@ -1247,6 +1405,10 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
     [entries],
   )
 
+  const selectedSector = SECTORES_DELIVERY.find((s) => s.id === sectorId) ?? null
+  const deliveryFee = deliveryMethod === 'delivery' && selectedSector ? selectedSector.price : 0
+  const grandTotal = totalPrice + deliveryFee
+
   const sendOrder = () => {
     if (entries.length === 0) return
 
@@ -1261,10 +1423,20 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
       }
       lines.push('')
     }
-    lines.push(`*Total (${totalItems} ${totalItems === 1 ? 'producto' : 'productos'}): ${formatPrice(totalPrice)}*`)
+    lines.push(
+      `*Subtotal (${totalItems} ${totalItems === 1 ? 'producto' : 'productos'}): ${formatPrice(totalPrice)}*`,
+    )
+    if (deliveryMethod === 'retiro') {
+      lines.push('*Modalidad: Retiro en local*')
+    } else if (deliveryMethod === 'delivery' && selectedSector) {
+      lines.push(`*Modalidad: Delivery en ${selectedSector.label}*`)
+      lines.push(`*Costo delivery: ${formatPrice(selectedSector.price)}*`)
+    }
+    lines.push(`*Total a pagar: ${formatPrice(grandTotal)}*`)
 
     const message = encodeURIComponent(lines.join('\n'))
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank')
+    setCheckoutOpen(false)
   }
 
   return (
@@ -1360,12 +1532,29 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
             >
               <X className="h-5 w-5" />
             </button>
-            <Button variant="brand" size="pill" onClick={sendOrder} className="shrink-0">
+            <Button
+              variant="brand"
+              size="pill"
+              onClick={() => setCheckoutOpen(true)}
+              className="shrink-0"
+            >
               Realizar Pedido
             </Button>
           </div>
         </div>
       )}
+
+      <CheckoutModal
+        open={checkoutOpen}
+        onClose={() => setCheckoutOpen(false)}
+        totalItems={totalItems}
+        totalPrice={totalPrice}
+        deliveryMethod={deliveryMethod}
+        onSelectMethod={setDeliveryMethod}
+        sectorId={sectorId}
+        onSelectSector={setSectorId}
+        onConfirm={sendOrder}
+      />
     </section>
   )
 }

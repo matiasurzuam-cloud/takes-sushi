@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { MessageCircle, Camera, MapPin, Navigation } from 'lucide-react'
 import type { SiteContent } from '@/lib/content'
+import { CartaSelectorButton } from '@/components/carta-selector-button'
 
 // Mismo motivo que en site-header.tsx: el footer también aparece en
 // páginas propias (/eventos, /reservas), así que los anchors necesitan el
@@ -98,12 +99,18 @@ export function SiteFooter({ content }: { content: SiteContent }) {
             <ul className="mt-4 space-y-2.5">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className="text-sm text-background/70 transition-colors hover:text-brand"
-                  >
-                    {link.label}
-                  </a>
+                  {link.label === 'Carta' ? (
+                    <CartaSelectorButton className="text-sm text-background/70 transition-colors hover:text-brand">
+                      {link.label}
+                    </CartaSelectorButton>
+                  ) : (
+                    <a
+                      href={link.href}
+                      className="text-sm text-background/70 transition-colors hover:text-brand"
+                    >
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

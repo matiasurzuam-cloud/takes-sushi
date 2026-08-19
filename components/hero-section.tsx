@@ -3,6 +3,7 @@ import { Star, Leaf, Clock, ChevronDown, MessageCircle, Sparkles } from 'lucide-
 import { PromoBanner } from '@/components/promo-banner'
 import { Button } from '@/components/ui/button'
 import { OpenNowBadge } from '@/components/open-now-badge'
+import { HeroCartaButton } from '@/components/hero-carta-button'
 import type { Confianza, SiteContent } from '@/lib/content'
 
 // Badge de confianza junto al CTA principal. Prioriza un rating real (ej.
@@ -109,14 +110,7 @@ export function HeroSection({ content }: { content: SiteContent }) {
                 >
                   <MessageCircle className="h-5 w-5" /> Hacer pedido
                 </Button>
-                <Button
-                  variant="brand-outline"
-                  size="pill"
-                  nativeButton={false}
-                  render={<a href="#carta" />}
-                >
-                  Ver la carta
-                </Button>
+                <HeroCartaButton />
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
