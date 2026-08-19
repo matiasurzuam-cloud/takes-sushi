@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Star, Leaf, Clock, ChevronDown, MessageCircle, Sparkles } from 'lucide-react'
-import { PromoBanner } from '@/components/promo-banner'
+import { HeroPromoBanner } from '@/components/hero-promo-banner'
 import { Button } from '@/components/ui/button'
 import { OpenNowBadge } from '@/components/open-now-badge'
 import { HeroCartaButton } from '@/components/hero-carta-button'
@@ -143,7 +143,7 @@ export function HeroSection({ content }: { content: SiteContent }) {
           </div>
 
           <div className="flex justify-center lg:justify-end">
-            <PromoBanner />
+            <HeroPromoBanner />
           </div>
         </div>
       </div>
