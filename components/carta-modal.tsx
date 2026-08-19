@@ -4,7 +4,15 @@ import { X, Store, Bike } from 'lucide-react'
 
 // Link real de la carta para servir en el local (Toteat) — el sitio propio
 // (sección #carta) es la otra opción, para pedidos con delivery.
-const TOTEAT_URL = "https://toteat.shop/r/cl/Take's/21730/checkin/menu"
+export const TOTEAT_URL = "https://toteat.shop/r/cl/Take's/21730/checkin/menu"
+
+// menu-section.tsx lee esta key al montar para saltarse su propio gate de
+// selección: si ya elegiste "delivery" acá, no tiene sentido preguntarte
+// de nuevo al llegar a la sección. La key cubre la navegación entre
+// páginas (recarga completa); el evento cubre el caso "ya estás en /" y el
+// link solo cambia el hash, sin remontar MenuSection.
+export const MENU_UNLOCK_KEY = 'takes-menu-unlocked'
+export const MENU_UNLOCK_EVENT = 'takes:menu-unlock'
 
 export function CartaModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null
@@ -56,7 +64,11 @@ export function CartaModal({ open, onClose }: { open: boolean; onClose: () => vo
 
           <a
             href="/#carta"
-            onClick={onClose}
+            onClick={() => {
+              sessionStorage.setItem(MENU_UNLOCK_KEY, '1')
+              window.dispatchEvent(new Event(MENU_UNLOCK_EVENT))
+              onClose()
+            }}
             className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-border bg-secondary/40 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-xl"
           >
             <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/15 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">

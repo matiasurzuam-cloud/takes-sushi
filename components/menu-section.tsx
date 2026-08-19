@@ -1,11 +1,12 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
-import { Leaf, Flame, Plus, Minus, ShoppingBag, X } from 'lucide-react'
+import { Leaf, Flame, Plus, Minus, ShoppingBag, Store, Bike, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
+import { TOTEAT_URL, MENU_UNLOCK_KEY, MENU_UNLOCK_EVENT } from '@/components/carta-modal'
 
 type MenuItem = {
   name: string
@@ -1206,6 +1207,45 @@ type CartEntry = {
   qty: number
 }
 
+function MenuGate({ onUnlock }: { onUnlock: () => void }) {
+  return (
+    <Reveal className="mx-auto mt-12 grid max-w-3xl gap-5 sm:grid-cols-2">
+      <a
+        href={TOTEAT_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group flex flex-col items-center gap-4 rounded-3xl border-2 border-border bg-card p-8 text-center shadow-lg shadow-black/5 transition-all duration-300 hover:-translate-y-1 hover:border-brand hover:shadow-2xl"
+      >
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand/15 text-brand transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
+          <Store className="h-8 w-8" />
+        </span>
+        <span className="text-lg font-extrabold uppercase tracking-wide text-foreground">
+          Carta para consumir en local
+        </span>
+        <span className="text-sm text-muted-foreground">
+          Ábrela en Toteat y pide directo desde tu mesa
+        </span>
+      </a>
+
+      <button
+        type="button"
+        onClick={onUnlock}
+        className="group flex flex-col items-center gap-4 rounded-3xl border-2 border-border bg-card p-8 text-center shadow-lg shadow-black/5 transition-all duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-2xl"
+      >
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/15 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
+          <Bike className="h-8 w-8" />
+        </span>
+        <span className="text-lg font-extrabold uppercase tracking-wide text-foreground">
+          Pedir para delivery
+        </span>
+        <span className="text-sm text-muted-foreground">
+          Arma tu pedido y elige retiro o despacho
+        </span>
+      </button>
+    </Reveal>
+  )
+}
+
 type DeliveryMethod = 'retiro' | 'delivery'
 
 const SECTORES_DELIVERY = [
@@ -1362,9 +1402,22 @@ function CheckoutModal({
 }
 
 export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
+  const [unlocked, setUnlocked] = useState(false)
   const [active, setActive] = useState(categories[0].id)
   const [cart, setCart] = useState<Record<string, CartEntry>>({})
   const [checkoutOpen, setCheckoutOpen] = useState(false)
+
+  // Si llegaste acá desde el modal "Pedir para delivery" (hero/nav/footer),
+  // ya elegiste tu modalidad — evita preguntarte de nuevo.
+  useEffect(() => {
+    if (window.sessionStorage.getItem(MENU_UNLOCK_KEY) === '1') {
+      window.sessionStorage.removeItem(MENU_UNLOCK_KEY)
+      setUnlocked(true)
+    }
+    const onUnlockEvent = () => setUnlocked(true)
+    window.addEventListener(MENU_UNLOCK_EVENT, onUnlockEvent)
+    return () => window.removeEventListener(MENU_UNLOCK_EVENT, onUnlockEvent)
+  }, [])
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null)
   const [sectorId, setSectorId] = useState<string | null>(null)
   const current = categories.find((c) => c.id === active) ?? categories[0]
@@ -1449,61 +1502,68 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
           <span className="text-eyebrow">Nuestra carta</span>
           <h2 className="text-h2 mt-3">Explora nuestro menú</h2>
           <p className="text-lead mt-4">
-            Sushi preparado al momento, café de especialidad, tostones, sandwiches y
-            coctelería. Elige una categoría y descubre todo lo que tenemos para ti.
+            {unlocked
+              ? 'Sushi preparado al momento, café de especialidad, tostones, sandwiches y coctelería. Elige una categoría y descubre todo lo que tenemos para ti.'
+              : 'Elige cómo quieres disfrutar tu pedido.'}
           </p>
         </Reveal>
 
-        {/* Category tabs */}
-        <Reveal className="mt-10 flex flex-wrap justify-center gap-2.5">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setActive(cat.id)}
-              className={cn(
-                'rounded-full px-5 py-2.5 text-sm font-semibold transition-all',
-                active === cat.id
-                  ? 'bg-brand text-brand-foreground shadow-lg shadow-brand/25'
-                  : 'bg-card text-muted-foreground hover:bg-brand/10 hover:text-foreground',
-              )}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </Reveal>
+        {!unlocked ? (
+          <MenuGate onUnlock={() => setUnlocked(true)} />
+        ) : (
+          <>
+            {/* Category tabs */}
+            <Reveal className="mt-10 flex flex-wrap justify-center gap-2.5">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setActive(cat.id)}
+                  className={cn(
+                    'rounded-full px-5 py-2.5 text-sm font-semibold transition-all',
+                    active === cat.id
+                      ? 'bg-brand text-brand-foreground shadow-lg shadow-brand/25'
+                      : 'bg-card text-muted-foreground hover:bg-brand/10 hover:text-foreground',
+                  )}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </Reveal>
 
-        {/* Category banner */}
-        <Reveal className="mt-10">
-          <div className="relative overflow-hidden rounded-3xl">
-            <div className="relative aspect-[16/7] w-full sm:aspect-[16/5]">
-              <Image
-                src={current.image || '/placeholder.svg'}
-                alt={current.label}
-                fill
-                className="object-cover"
-                sizes="(max-width: 1280px) 100vw, 1280px"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
-            </div>
-            <div className="absolute bottom-0 left-0 p-6 sm:p-8">
-              <h3 className="text-2xl font-extrabold text-white sm:text-3xl">{current.label}</h3>
-              <p className="mt-1 text-sm font-medium uppercase tracking-[0.18em] text-white/85">
-                {current.note}
-              </p>
-            </div>
-          </div>
-        </Reveal>
+            {/* Category banner */}
+            <Reveal className="mt-10">
+              <div className="relative overflow-hidden rounded-3xl">
+                <div className="relative aspect-[16/7] w-full sm:aspect-[16/5]">
+                  <Image
+                    src={current.image || '/placeholder.svg'}
+                    alt={current.label}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1280px) 100vw, 1280px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+                </div>
+                <div className="absolute bottom-0 left-0 p-6 sm:p-8">
+                  <h3 className="text-2xl font-extrabold text-white sm:text-3xl">{current.label}</h3>
+                  <p className="mt-1 text-sm font-medium uppercase tracking-[0.18em] text-white/85">
+                    {current.note}
+                  </p>
+                </div>
+              </div>
+            </Reveal>
 
-        <ListLayout
-          items={current.items}
-          categoryId={current.id}
-          getQty={getQty}
-          onAdd={addItem}
-          onRemove={removeItem}
-        />
+            <ListLayout
+              items={current.items}
+              categoryId={current.id}
+              getQty={getQty}
+              onAdd={addItem}
+              onRemove={removeItem}
+            />
 
-        {current.promo && <PromoBanner promo={current.promo} />}
+            {current.promo && <PromoBanner promo={current.promo} />}
+          </>
+        )}
       </div>
 
       {/* Barra de pedido flotante */}
