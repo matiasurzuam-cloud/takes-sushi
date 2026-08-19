@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, LogOut, Trash2, Upload } from 'lucide-react'
+import { Info, Loader2, LogOut, Trash2, Upload } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { SmartImage } from '@/components/ui/smart-image'
@@ -103,6 +103,13 @@ export function GaleriaAdmin({ initialFotos }: GaleriaAdminProps) {
 
       <div className="mt-8 rounded-3xl border border-dashed border-border bg-card p-5 shadow-sm">
         <p className="text-sm font-semibold text-foreground">Agregar foto</p>
+        <p className="mt-1.5 flex items-start gap-1.5 text-xs leading-relaxed text-muted-foreground">
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          Ideal: foto horizontal (apaisada), proporción 3:2 o 4:3, con el sujeto
+          centrado. La grilla recorta cada foto distinto según la pantalla — desde
+          casi cuadrada en celular hasta paneles bien anchos en desktop — así que
+          evita fotos verticales o con detalles importantes muy cerca de los bordes.
+        </p>
         <div className="mt-3 flex flex-wrap items-end gap-3">
           <div className="min-w-[220px] flex-1 space-y-1.5">
             <label htmlFor="alt" className="text-xs font-medium text-muted-foreground">
