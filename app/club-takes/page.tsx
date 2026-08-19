@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import {
@@ -32,6 +34,25 @@ export const revalidate = 60
 // abajo, así que el botón es una alternativa exacta para quien está en
 // desktop y no puede escanear con el mismo dispositivo.
 const CLUB_URL = 'https://app.trackingtable.com/pdf-menu/348'
+
+// Capturas reales del flujo de registro (paso 1 al 6) como archivos
+// estáticos — mismo criterio que las reseñas (public/, permanentes, fuera
+// de Supabase). No hace falta tocar código para agregarlas: basta con subir
+// `public/images/club-pasos/1.png` ... `6.png` (también sirven .jpg/.jpeg/
+// .webp) y aparecen solas. `existsSync` corre en el servidor (esta página
+// no lleva 'use client'), así que mientras no estén todas subidas, la
+// sección de más abajo sigue mostrando los íconos genéricos sin romperse.
+const PASO_EXTENSIONES = ['png', 'jpg', 'jpeg', 'webp']
+function findPasoImage(n: number) {
+  for (const ext of PASO_EXTENSIONES) {
+    const src = `/images/club-pasos/${n}.${ext}`
+    if (existsSync(join(process.cwd(), 'public', src))) return src
+  }
+  return null
+}
+const pasoImagenes = [1, 2, 3, 4, 5, 6]
+  .map((n) => ({ n, src: findPasoImage(n) }))
+  .filter((p): p is { n: number; src: string } => p.src !== null)
 
 const BENEFICIOS = [
   { icon: Heart, titulo: '10% de descuento', estampillas: 5 },
@@ -136,22 +157,44 @@ export default async function ClubTakesPage() {
               <h2 className="text-h2 mt-3">Solo toma un minuto</h2>
             </Reveal>
 
-            <div className="mt-12 grid gap-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-4">
-              {PASOS.map((paso, i) => (
-                <Reveal key={paso.titulo} delay={i * 80} className="relative text-center">
-                  <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand text-brand-foreground shadow-lg shadow-brand/25">
-                    <paso.icon className="h-7 w-7" />
-                    <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
-                      {i + 1}
-                    </span>
-                  </div>
-                  <p className="mt-4 text-base font-extrabold text-foreground">{paso.titulo}</p>
-                  <p className="mt-1.5 text-pretty text-sm leading-relaxed text-muted-foreground">
-                    {paso.descripcion}
-                  </p>
-                </Reveal>
-              ))}
-            </div>
+            {pasoImagenes.length > 0 ? (
+              <div className="mt-12 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
+                {pasoImagenes.map(({ n, src }, i) => (
+                  <Reveal key={n} delay={i * 60} className="relative">
+                    <div className="relative mx-auto max-w-[200px] overflow-hidden rounded-2xl border border-border shadow-lg shadow-black/10">
+                      <span className="absolute left-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground shadow">
+                        {n}
+                      </span>
+                      <Image
+                        src={src}
+                        alt={`Paso ${n} para unirte al Club Take's`}
+                        width={400}
+                        height={866}
+                        className="h-auto w-full"
+                        sizes="(max-width: 640px) 45vw, 200px"
+                      />
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-12 grid gap-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-4">
+                {PASOS.map((paso, i) => (
+                  <Reveal key={paso.titulo} delay={i * 80} className="relative text-center">
+                    <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand text-brand-foreground shadow-lg shadow-brand/25">
+                      <paso.icon className="h-7 w-7" />
+                      <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
+                        {i + 1}
+                      </span>
+                    </div>
+                    <p className="mt-4 text-base font-extrabold text-foreground">{paso.titulo}</p>
+                    <p className="mt-1.5 text-pretty text-sm leading-relaxed text-muted-foreground">
+                      {paso.descripcion}
+                    </p>
+                  </Reveal>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -163,7 +206,7 @@ export default async function ClubTakesPage() {
                 <div className="mx-auto flex flex-col items-center gap-3">
                   <div className="rounded-3xl bg-white p-4 shadow-xl">
                     <Image
-                      src="/images/club-qr.png"
+                      src="/images/club-pasos/club-qr.png"
                       alt="Código QR para unirte al Club Take's"
                       width={800}
                       height={800}
