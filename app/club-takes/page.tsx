@@ -30,10 +30,11 @@ export const metadata: Metadata = {
 // trata como SSG puro) — nunca se habría refrescado tras el primer build.
 export const revalidate = 60
 
-// Registro del club (TrackingTable) — mismo destino que codifica el QR de
-// abajo, así que el botón es una alternativa exacta para quien está en
-// desktop y no puede escanear con el mismo dispositivo.
-const CLUB_URL = 'https://app.trackingtable.com/pdf-menu/348'
+// Registro del club (TrackingTable). El botón usa un link directo al
+// formulario de pase de billetera (con UTM propio del acortador), distinto
+// del que codifica el QR de abajo — ambos llevan al mismo club, solo que
+// por rutas distintas dentro de TrackingTable.
+const CLUB_URL = 'https://app.trackingtable.com/get-wallet-pass/1602?utm_source=url_shortener&url_shortener_id=971'
 
 // Capturas reales del flujo de registro (paso 1 al 6) como archivos
 // estáticos — mismo criterio que las reseñas (public/, permanentes, fuera
@@ -224,8 +225,8 @@ export default async function ClubTakesPage() {
                     Únete desde cualquier dispositivo
                   </h2>
                   <p className="mx-auto mt-3 max-w-md text-pretty leading-relaxed text-background/75 lg:mx-0">
-                    Si estás en el computador, usa el botón — te lleva directo al mismo
-                    registro que abre el código QR.
+                    Si estás en el computador, usa el botón — te lleva directo al
+                    registro del club.
                   </p>
                   <Button
                     variant="accent"
