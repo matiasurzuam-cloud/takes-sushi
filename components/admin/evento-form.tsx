@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Link as LinkIcon, Loader2, Upload, X } from 'lucide-react'
+import { Info, Link as LinkIcon, Loader2, Upload, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { SmartImage } from '@/components/ui/smart-image'
@@ -112,6 +112,13 @@ export function EventoForm({ initial, onSubmit, onCancel }: EventoFormProps) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
         <span className="text-sm font-medium text-foreground">Imagen</span>
+        <p className="flex items-start gap-1.5 text-xs leading-relaxed text-muted-foreground">
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          Ideal: foto horizontal (apaisada), proporción 3:2 o 4:3, con el sujeto
+          centrado. Se usa como portada destacada del próximo evento, en la lista
+          de eventos y recortada en cuadrado en el recap de eventos pasados —
+          evita fotos verticales o con detalles importantes muy cerca de los bordes.
+        </p>
 
         {values.imagen ? (
           <div className="relative h-32 w-full overflow-hidden rounded-xl border border-border bg-muted">
