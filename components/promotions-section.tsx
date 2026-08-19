@@ -1,6 +1,6 @@
 'use client'
 
-import { Gift } from 'lucide-react'
+import { ArrowRight, Gift } from 'lucide-react'
 import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -9,6 +9,10 @@ import { PromoCountdown } from '@/components/promo-popup/promo-countdown'
 import { usePromosVigentes } from '@/components/promo-popup/use-promos-vigentes'
 import type { SiteContent } from '@/lib/content'
 
+// Banners full-width (imagen + panel de texto) en vez de la grilla chica de
+// antes — se ven más "profesionales" a lo ancho de la página. El detalle
+// completo (con el link propio de cada promo) vive en /promociones
+// (components/promotions-grid.tsx); acá "Ver más" siempre apunta ahí.
 export function PromotionsSection({ content }: { content: SiteContent }) {
   const { promos } = usePromosVigentes()
   const { contacto } = content
@@ -26,9 +30,9 @@ export function PromotionsSection({ content }: { content: SiteContent }) {
         </Reveal>
 
         {promos === null ? (
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="h-80 animate-pulse rounded-3xl bg-muted" />
+          <div className="mt-12 space-y-6">
+            {[0, 1].map((i) => (
+              <div key={i} className="h-64 animate-pulse rounded-3xl bg-muted sm:h-80" />
             ))}
           </div>
         ) : promos.length === 0 ? (
@@ -42,36 +46,41 @@ export function PromotionsSection({ content }: { content: SiteContent }) {
             />
           </Reveal>
         ) : (
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 space-y-6">
             {promos.map((promo, i) => (
               <Reveal key={promo.id} delay={i * 80}>
-                <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                  <div className="relative h-48 w-full">
-                    <SmartImage
-                      src={promo.imagenes[0] || '/placeholder.svg'}
-                      alt={promo.titulo}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col gap-3 p-6">
-                    <h3 className="text-h3">{promo.titulo}</h3>
-                    <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
-                      {promo.descripcion}
-                    </p>
-                    {promo.fechaExpiracion && <PromoCountdown fechaExpiracion={promo.fechaExpiracion} />}
-                    {promo.link && (
+                <div className="relative overflow-hidden rounded-3xl border border-border bg-card shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+                  <div className="grid md:grid-cols-2">
+                    <div className="relative h-56 sm:h-72 md:h-auto md:min-h-[320px]">
+                      <SmartImage
+                        src={promo.imagenes[0] || '/placeholder.svg'}
+                        alt={promo.titulo}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center gap-4 p-8 sm:p-10 md:p-12">
+                      <span className="text-eyebrow w-fit">Promoción</span>
+                      <h3 className="text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">
+                        {promo.titulo}
+                      </h3>
+                      <p className="text-pretty leading-relaxed text-muted-foreground">
+                        {promo.descripcion}
+                      </p>
+                      {promo.fechaExpiracion && (
+                        <PromoCountdown fechaExpiracion={promo.fechaExpiracion} />
+                      )}
                       <Button
                         variant="brand"
                         size="pill"
                         className="mt-1 w-fit"
                         nativeButton={false}
-                        render={<a href={promo.link} />}
+                        render={<a href="/promociones" />}
                       >
-                        Ver más
+                        Ver más <ArrowRight className="h-4 w-4" />
                       </Button>
-                    )}
+                    </div>
                   </div>
                 </div>
               </Reveal>
