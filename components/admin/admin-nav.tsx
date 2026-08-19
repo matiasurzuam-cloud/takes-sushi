@@ -1,12 +1,13 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { CalendarDays, Gift } from 'lucide-react'
+import { CalendarDays, Gift, Images } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const TABS = [
   { href: '/admin/promociones', label: 'Promociones', icon: Gift },
   { href: '/admin/eventos', label: 'Eventos', icon: CalendarDays },
+  { href: '/admin/galeria', label: 'Galería', icon: Images },
 ]
 
 export function AdminNav() {

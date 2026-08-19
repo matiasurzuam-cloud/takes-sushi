@@ -18,6 +18,8 @@ export const config = {
     '/api/promociones/:path*',
     '/api/eventos',
     '/api/eventos/:path*',
+    '/api/galeria',
+    '/api/galeria/:path*',
   ],
 }
 

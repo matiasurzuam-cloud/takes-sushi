@@ -169,6 +169,14 @@ insert into storage.buckets (id, name, public)
 values ('promociones', 'promociones', true)
 on conflict (id) do nothing;
 
+-- Bucket de la galería del panel admin. A diferencia de promociones, acá
+-- el tope de 8 fotos y el borrado de la más antigua al superarlo se
+-- manejan en código (lib/galeria/store.ts), no acá — Storage no tiene un
+-- mecanismo nativo de "máximo N archivos".
+insert into storage.buckets (id, name, public)
+values ('galeria', 'galeria', true)
+on conflict (id) do nothing;
+
 -- ---------------------------------------------------------------------------
 -- 4. Login del admin → Supabase Auth
 -- ---------------------------------------------------------------------------
