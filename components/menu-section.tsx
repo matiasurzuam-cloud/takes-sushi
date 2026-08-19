@@ -209,7 +209,7 @@ const categories: Category[] = [
       },
       {
         name: 'Ebi Maki (Hosomaki 6c)',
-        price: 4999,
+        price: 4900,
         description: 'Alga nori rellena con arroz de sushi, palta, camarón furay y queso crema.',
       },
       {
@@ -219,7 +219,7 @@ const categories: Category[] = [
       },
       {
         name: 'Vegui Maki (Hosomaki 6c)',
-        price: 4990,
+        price: 4900,
         description: 'Alga nori rellena con arroz, palmito, pimentón, palta y cebolla morada.',
         vegan: true,
       },
@@ -283,7 +283,7 @@ const categories: Category[] = [
       },
       {
         name: 'Ebi Hass (Envuelto Palta)',
-        price: 5900,
+        price: 6900,
         description: 'Camarón furay en panko, queso crema y palta envuelto en palta.',
       },
       {
@@ -323,7 +323,7 @@ const categories: Category[] = [
       },
       {
         name: 'Fresh Roll (Sin Arroz)',
-        price: 5900,
+        price: 6900,
         description: 'Palmito, queso crema, cebollín y pimentón sin arroz, envuelto en palta.',
       },
       {
@@ -370,7 +370,7 @@ const categories: Category[] = [
       },
       {
         name: 'Dolly (En Queso)',
-        price: 5900,
+        price: 6900,
         description:
           'Champiñón salteado, palta y cebollín envuelto en queso crema con un toque de almendras laminadas.',
       },
@@ -793,38 +793,38 @@ const categories: Category[] = [
       sub: 'Y disfrútalo como más te guste',
     },
     items: [
-      { name: 'Espreso', price: 2000, description: 'Extracción concentrada de café.' },
-      { name: 'Americano', price: 2300, description: 'Espresso diluido con agua.' },
-      { name: 'Macchiato', price: 2500, description: 'Espresso manchado con leche.' },
-      { name: 'Cortado', price: 2600, description: 'Espresso simple con leche en taza de 150 ml.' },
+      { name: 'Espreso', price: 2800, description: 'Extracción concentrada de café.' },
+      { name: 'Americano', price: 3100, description: 'Espresso diluido con agua.' },
+      { name: 'Macchiato', price: 3000, description: 'Espresso manchado con leche.' },
+      { name: 'Cortado', price: 3500, description: 'Espresso simple con leche en taza de 150 ml.' },
       { name: 'Capuccino', price: 2600, description: 'Espresso simple con leche en taza de 150 ml.' },
-      { name: 'Latte', price: 2800, description: 'Espresso simple con leche en taza de 300 ml.' },
+      { name: 'Latte', price: 3400, description: 'Espresso simple con leche en taza de 300 ml.' },
       {
         name: 'Bombón',
-        price: 3000,
+        price: 3800,
         description: 'Espresso doble con base de leche condensada y leche emulsionada.',
       },
       {
         name: 'Mokaccino',
-        price: 3000,
+        price: 4300,
         description: 'Espresso doble con leche y cacao en polvo en taza de 300 ml.',
       },
-      { name: 'Moka Blanco', price: 3500, description: 'Espresso doble con leche y chocolate blanco.' },
+      { name: 'Moka Blanco', price: 4600, description: 'Espresso doble con leche y chocolate blanco.' },
       {
         name: 'Terragoloso',
-        price: 3500,
+        price: 4000,
         description:
           'Espresso con base de manjar, salsa de chocolate, leche, espuma de leche y salsa de manjar.',
         top: true,
       },
       {
         name: 'After Eight',
-        price: 4000,
+        price: 4800,
         description: 'Espresso con salsa de chocolate, syrup de menta y leche emulsionada.',
       },
       {
         name: 'Romance',
-        price: 4000,
+        price: 4800,
         description: 'Espresso con salsa de frambuesa, cacao espolvoreado y crema batida.',
       },
       { name: 'Té Variedades', price: 1900, description: 'Variedad de tés seleccionados.' },
@@ -832,7 +832,7 @@ const categories: Category[] = [
       { name: 'Té de Hojas', price: 2300, description: 'Infusión tradicional de hojas de té.' },
       {
         name: 'Chai Latte',
-        price: 2900,
+        price: 3900,
         description: 'Infusión de té negro y especias aromáticas, emulsionado con leche.',
       },
       {
@@ -840,15 +840,15 @@ const categories: Category[] = [
         price: 3500,
         description: 'Té matcha energizante, desintoxicante, estimulante y delicioso.',
       },
-      { name: 'Chocolate Caliente', price: 3100, description: 'Cacao dulce con leche texturizada.' },
+      { name: 'Chocolate Caliente', price: 3800, description: 'Cacao dulce con leche texturizada.' },
       {
         name: 'Chocolate Caliente Americano',
-        price: 3600,
+        price: 4300,
         description: 'Cacao dulce con leche texturizada, coronado con crema chantilly.',
       },
       {
         name: 'Chocolate Caliente de la Casa',
-        price: 3600,
+        price: 4300,
         description: 'Cacao dulce con leche texturizada, coronado con marshmallow.',
         top: true,
       },
