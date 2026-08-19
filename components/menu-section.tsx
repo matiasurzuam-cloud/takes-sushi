@@ -1248,13 +1248,16 @@ function MenuGate({ onUnlock }: { onUnlock: () => void }) {
 
 type DeliveryMethod = 'retiro' | 'delivery'
 
-const SECTORES_DELIVERY = [
+// `price: null` marca "Otro sector" — no tiene tarifa fija, así que el
+// costo queda "a confirmar por WhatsApp" en vez de sumarse al total.
+const SECTORES_DELIVERY: { id: string; label: string; price: number | null }[] = [
   { id: 'molina-urbano', label: 'Molina Urbano', price: 1000 },
   { id: 'casa-blanca', label: 'Casa Blanca', price: 4000 },
   { id: 'pichingal', label: 'Pichingal', price: 6000 },
   { id: 'cerrillo-bascunan', label: 'Cerrillo Bascuñán', price: 7000 },
   { id: 'bajo-los-romeros', label: 'Bajo Los Romeros', price: 6000 },
   { id: 'san-jorge-de-romeral', label: 'San Jorge de Romeral', price: 9000 },
+  { id: 'otro', label: 'Otro sector', price: null },
 ]
 
 function CheckoutModal({
@@ -1266,6 +1269,8 @@ function CheckoutModal({
   onSelectMethod,
   sectorId,
   onSelectSector,
+  otroDetalle,
+  onChangeOtroDetalle,
   onConfirm,
 }: {
   open: boolean
@@ -1276,14 +1281,21 @@ function CheckoutModal({
   onSelectMethod: (method: DeliveryMethod) => void
   sectorId: string | null
   onSelectSector: (id: string) => void
+  otroDetalle: string
+  onChangeOtroDetalle: (value: string) => void
   onConfirm: () => void
 }) {
   if (!open) return null
 
   const selectedSector = SECTORES_DELIVERY.find((s) => s.id === sectorId) ?? null
-  const deliveryFee = deliveryMethod === 'delivery' && selectedSector ? selectedSector.price : 0
+  const esOtroSector = selectedSector?.id === 'otro'
+  const deliveryFee = deliveryMethod === 'delivery' && selectedSector?.price ? selectedSector.price : 0
   const grandTotal = totalPrice + deliveryFee
-  const canConfirm = deliveryMethod === 'retiro' || (deliveryMethod === 'delivery' && selectedSector !== null)
+  const canConfirm =
+    deliveryMethod === 'retiro' ||
+    (deliveryMethod === 'delivery' &&
+      selectedSector !== null &&
+      (!esOtroSector || otroDetalle.trim().length > 0))
 
   return (
     <div
@@ -1361,10 +1373,30 @@ function CheckoutModal({
                   )}
                 >
                   <span className="font-semibold">{sector.label}</span>
-                  <span className="font-bold text-brand">{formatPrice(sector.price)}</span>
+                  <span className="font-bold text-brand">
+                    {sector.price !== null ? formatPrice(sector.price) : 'A confirmar'}
+                  </span>
                 </button>
               ))}
             </div>
+
+            {esOtroSector && (
+              <div className="mt-3 space-y-1.5">
+                <label htmlFor="otro-detalle" className="text-xs font-semibold text-muted-foreground">
+                  Cuéntanos tu dirección o sector
+                </label>
+                <input
+                  id="otro-detalle"
+                  value={otroDetalle}
+                  onChange={(e) => onChangeOtroDetalle(e.target.value)}
+                  placeholder="Ej. Calle Los Aromos 123, Molina"
+                  className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand focus:ring-2 focus:ring-brand/30"
+                />
+                <p className="text-xs text-muted-foreground">
+                  El costo de delivery para tu sector se confirma por WhatsApp.
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -1378,13 +1410,24 @@ function CheckoutModal({
           {deliveryMethod === 'delivery' && (
             <div className="flex items-center justify-between text-sm text-muted-foreground">
               <span>Delivery{selectedSector ? ` · ${selectedSector.label}` : ''}</span>
-              <span>{selectedSector ? formatPrice(selectedSector.price) : '—'}</span>
+              <span>
+                {selectedSector
+                  ? selectedSector.price !== null
+                    ? formatPrice(selectedSector.price)
+                    : 'A confirmar'
+                  : '—'}
+              </span>
             </div>
           )}
           <div className="flex items-center justify-between pt-1 text-base font-extrabold text-foreground">
             <span>Total</span>
             <span>{formatPrice(grandTotal)}</span>
           </div>
+          {esOtroSector && (
+            <p className="pt-1 text-[0.7rem] text-muted-foreground">
+              No incluye el costo de delivery, que se confirma por WhatsApp.
+            </p>
+          )}
         </div>
 
         <Button
@@ -1420,6 +1463,7 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
   }, [])
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null)
   const [sectorId, setSectorId] = useState<string | null>(null)
+  const [otroDetalle, setOtroDetalle] = useState('')
   const current = categories.find((c) => c.id === active) ?? categories[0]
 
   const getQty = (id: string) => cart[id]?.qty ?? 0
@@ -1459,7 +1503,7 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
   )
 
   const selectedSector = SECTORES_DELIVERY.find((s) => s.id === sectorId) ?? null
-  const deliveryFee = deliveryMethod === 'delivery' && selectedSector ? selectedSector.price : 0
+  const deliveryFee = deliveryMethod === 'delivery' && selectedSector?.price ? selectedSector.price : 0
   const grandTotal = totalPrice + deliveryFee
 
   const sendOrder = () => {
@@ -1482,10 +1526,19 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
     if (deliveryMethod === 'retiro') {
       lines.push('*Modalidad: Retiro en local*')
     } else if (deliveryMethod === 'delivery' && selectedSector) {
-      lines.push(`*Modalidad: Delivery en ${selectedSector.label}*`)
-      lines.push(`*Costo delivery: ${formatPrice(selectedSector.price)}*`)
+      if (selectedSector.price !== null) {
+        lines.push(`*Modalidad: Delivery en ${selectedSector.label}*`)
+        lines.push(`*Costo delivery: ${formatPrice(selectedSector.price)}*`)
+      } else {
+        lines.push(`*Modalidad: Delivery — Otro sector*`)
+        lines.push(`*Dirección/sector: ${otroDetalle.trim()}*`)
+        lines.push('*Costo delivery: A confirmar por WhatsApp*')
+      }
     }
     lines.push(`*Total a pagar: ${formatPrice(grandTotal)}*`)
+    if (deliveryMethod === 'delivery' && selectedSector?.price === null) {
+      lines.push('_(no incluye el costo de delivery, se confirma por WhatsApp)_')
+    }
 
     const message = encodeURIComponent(lines.join('\n'))
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank')
@@ -1613,6 +1666,8 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
         onSelectMethod={setDeliveryMethod}
         sectorId={sectorId}
         onSelectSector={setSectorId}
+        otroDetalle={otroDetalle}
+        onChangeOtroDetalle={setOtroDetalle}
         onConfirm={sendOrder}
       />
     </section>
