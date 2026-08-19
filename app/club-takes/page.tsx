@@ -36,13 +36,16 @@ export const revalidate = 60
 // por rutas distintas dentro de TrackingTable.
 const CLUB_URL = 'https://app.trackingtable.com/get-wallet-pass/1602?utm_source=url_shortener&url_shortener_id=971'
 
-// Capturas reales del flujo de registro (paso 1 al 6) como archivos
-// estáticos — mismo criterio que las reseñas (public/, permanentes, fuera
-// de Supabase). No hace falta tocar código para agregarlas: basta con subir
-// `public/images/club-pasos/1.png` ... `6.png` (también sirven .jpg/.jpeg/
-// .webp) y aparecen solas. `existsSync` corre en el servidor (esta página
-// no lleva 'use client'), así que mientras no estén todas subidas, la
-// sección de más abajo sigue mostrando los íconos genéricos sin romperse.
+// Capturas reales del flujo de registro como archivos estáticos — mismo
+// criterio que las reseñas (public/, permanentes, fuera de Supabase). De
+// las 6 subidas a public/images/club-pasos/ (1.png ... 6.png, también
+// sirven .jpg/.jpeg/.webp), se curan estas 4 para la galería de "cómo
+// unirte": la 2 (bienvenida/beneficios), 3 (formulario), 5 (pase agregado
+// a Wallet) y 6 (éxito) — la 1 (popup de invitación) y la 4 (paso
+// intermedio de "cargando") no aportan a una guía de 4 pasos.
+// `existsSync` corre en el servidor (esta página no lleva 'use client'),
+// así que mientras no estén todas subidas, sigue mostrando los íconos
+// genéricos sin romperse.
 const PASO_EXTENSIONES = ['png', 'jpg', 'jpeg', 'webp']
 function findPasoImage(n: number) {
   for (const ext of PASO_EXTENSIONES) {
@@ -51,9 +54,17 @@ function findPasoImage(n: number) {
   }
   return null
 }
-const pasoImagenes = [1, 2, 3, 4, 5, 6]
-  .map((n) => ({ n, src: findPasoImage(n) }))
-  .filter((p): p is { n: number; src: string } => p.src !== null)
+const PASO_CARDS = [
+  { n: 2, titulo: 'Escanea el QR' },
+  { n: 3, titulo: 'Completa tus datos' },
+  { n: 5, titulo: 'Agrega a tu Wallet' },
+  { n: 6, titulo: '¡Listo!' },
+]
+const pasoImagenes = PASO_CARDS.map((p, i) => ({
+  numero: i + 1,
+  titulo: p.titulo,
+  src: findPasoImage(p.n),
+})).filter((p): p is { numero: number; titulo: string; src: string } => p.src !== null)
 
 const BENEFICIOS = [
   { icon: Heart, titulo: '10% de descuento', estampillas: 5 },
@@ -159,21 +170,38 @@ export default async function ClubTakesPage() {
             </Reveal>
 
             {pasoImagenes.length > 0 ? (
-              <div className="mt-12 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
-                {pasoImagenes.map(({ n, src }, i) => (
-                  <Reveal key={n} delay={i * 60} className="relative">
-                    <div className="relative mx-auto max-w-[200px] overflow-hidden rounded-2xl border border-border shadow-lg shadow-black/10">
-                      <span className="absolute left-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground shadow">
-                        {n}
-                      </span>
-                      <Image
-                        src={src}
-                        alt={`Paso ${n} para unirte al Club Take's`}
-                        width={400}
-                        height={866}
-                        className="h-auto w-full"
-                        sizes="(max-width: 640px) 45vw, 200px"
-                      />
+              // Carrusel con snap en mobile (una tarjeta a la vez, con un
+              // adelanto de la siguiente para invitar a deslizar); grid fijo
+              // desde sm: en adelante, sin scroll.
+              <div className="-mx-4 mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+                {pasoImagenes.map((paso, i) => (
+                  <Reveal
+                    key={paso.numero}
+                    delay={i * 100}
+                    className="w-[72vw] shrink-0 snap-center sm:w-auto"
+                  >
+                    <div className="mx-auto max-w-[220px]">
+                      <div className="relative overflow-hidden rounded-[2rem] border-[5px] border-foreground bg-foreground shadow-lg shadow-black/10 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl">
+                        <span
+                          aria-hidden="true"
+                          className="absolute left-1/2 top-1.5 z-10 h-1.5 w-10 -translate-x-1/2 rounded-full bg-foreground"
+                        />
+                        <div className="relative aspect-[9/19.5] w-full overflow-hidden rounded-[1.6rem]">
+                          <Image
+                            src={paso.src}
+                            alt={`Paso ${paso.numero}: ${paso.titulo}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 640px) 72vw, 220px"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-4 flex items-center justify-center gap-2.5">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground shadow-sm">
+                          {paso.numero}
+                        </span>
+                        <p className="text-sm font-bold text-foreground">{paso.titulo}</p>
+                      </div>
                     </div>
                   </Reveal>
                 ))}
