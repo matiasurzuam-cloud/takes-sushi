@@ -25,6 +25,11 @@ const buttonVariants = cva(
         // Variante para CTAs secundarios sobre fondos oscuros (ej. hero).
         'brand-outline':
           'border-white/25 bg-white/5 text-white backdrop-blur-sm hover:-translate-y-0.5 hover:bg-white/15',
+        // CTA naranjo/coral (ej. "Únete Ahora" del Club Takes) — mismo
+        // tratamiento pill que "brand" pero con el tono accent en vez del
+        // brand teal.
+        accent:
+          'bg-accent text-accent-foreground shadow-lg shadow-accent/25 hover:-translate-y-0.5 hover:shadow-accent/40',
       },
       size: {
         default:
