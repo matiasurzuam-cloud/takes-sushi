@@ -41,8 +41,12 @@ const CLUB_URL = 'https://app.trackingtable.com/get-wallet-pass/1602?utm_source=
 // las 6 subidas a public/images/club-pasos/ (1.png ... 6.png, también
 // sirven .jpg/.jpeg/.webp), se curan estas 4 para la galería de "cómo
 // unirte": la 2 (bienvenida/beneficios), 3 (formulario), 5 (pase agregado
-// a Wallet) y 6 (éxito) — la 1 (popup de invitación) y la 4 (paso
-// intermedio de "cargando") no aportan a una guía de 4 pasos.
+// a Wallet) y 6 (éxito) — la 1 (popup de invitación) no aporta a una guía
+// de 4 pasos. La 4 (click en "Add to Apple Wallet") es un recorte angosto
+// (828×557, no una captura de pantalla completa como las demás, que son
+// ~828×1700) — en vez de forzarla a un 5º marco de celular del mismo
+// tamaño (se vería desfasada), se muestra como una miniatura debajo de la
+// tarjeta "Completa tus datos", que es el paso al que pertenece.
 // `existsSync` corre en el servidor (esta página no lleva 'use client'),
 // así que mientras no estén todas subidas, sigue mostrando los íconos
 // genéricos sin romperse.
@@ -56,7 +60,7 @@ function findPasoImage(n: number) {
 }
 const PASO_CARDS = [
   { n: 2, titulo: 'Escanea el QR' },
-  { n: 3, titulo: 'Completa tus datos' },
+  { n: 3, titulo: 'Completa tus datos', extraN: 4 },
   { n: 5, titulo: 'Agrega a tu Wallet' },
   { n: 6, titulo: '¡Listo!' },
 ]
@@ -64,7 +68,8 @@ const pasoImagenes = PASO_CARDS.map((p, i) => ({
   numero: i + 1,
   titulo: p.titulo,
   src: findPasoImage(p.n),
-})).filter((p): p is { numero: number; titulo: string; src: string } => p.src !== null)
+  extraSrc: p.extraN ? findPasoImage(p.extraN) : null,
+})).filter((p): p is { numero: number; titulo: string; src: string; extraSrc: string | null } => p.src !== null)
 
 const BENEFICIOS = [
   { icon: Heart, titulo: '10% de descuento', estampillas: 5 },
@@ -202,6 +207,23 @@ export default async function ClubTakesPage() {
                         </span>
                         <p className="text-sm font-bold text-foreground">{paso.titulo}</p>
                       </div>
+
+                      {paso.extraSrc && (
+                        <div className="mt-3">
+                          <div className="relative aspect-[828/557] w-full overflow-hidden rounded-xl border-[3px] border-foreground shadow-md shadow-black/10">
+                            <Image
+                              src={paso.extraSrc}
+                              alt="Confirmando y agregando el pase a Wallet"
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 640px) 72vw, 220px"
+                            />
+                          </div>
+                          <p className="mt-1.5 text-center text-xs text-muted-foreground">
+                            Confirma y agrega tu pase
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </Reveal>
                 ))}
