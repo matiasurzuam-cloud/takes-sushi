@@ -300,4 +300,20 @@
   .animate-bounce-y {
     animation: bounce-y 2s ease-in-out infinite;
   }
+
+  /* Anillo de brillo expansivo — llama la atención sobre tarjetas
+     clicables enteras (ej. el hero del Club Takes) sin depender de hover,
+     así funciona igual en mobile. */
+  @keyframes glow-ring {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in oklch, var(--accent) 55%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 16px color-mix(in oklch, var(--accent) 0%, transparent);
+    }
+  }
+  .animate-glow-ring {
+    animation: glow-ring 2.4s ease-out infinite;
+  }
 }

@@ -107,33 +107,48 @@ export default async function ClubTakesPage() {
     <>
       <SiteHeader />
       <main className="pt-24 sm:pt-28">
-        {/* Hero */}
+        {/* Hero — toda la tarjeta (imagen + título) es un link directo al
+            registro del club, con un anillo de brillo pulsante siempre
+            activo (funciona en mobile, no depende de hover) + una etiqueta
+            con rebote invitando al clic, para que se note que es clicable. */}
         <section className="pt-8 sm:pt-10">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <Reveal className="relative overflow-hidden rounded-3xl shadow-2xl">
-              <div className="relative h-[340px] w-full sm:h-[400px]">
-                <Image
-                  src="/images/cat-sushi-rolls.png"
-                  alt="Rolls de sushi de TAKE'S bañados en salsa"
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 1280px) 100vw, 1280px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white backdrop-blur-sm">
-                  <Sparkles className="h-3.5 w-3.5 text-accent" />
-                  Club de beneficios
-                </span>
-                <h1 className="mt-5 text-4xl font-extrabold leading-tight text-white sm:text-5xl">
-                  Únete al Club Take&apos;s
-                </h1>
-                <p className="mx-auto mt-4 max-w-xl text-pretty text-base leading-relaxed text-white/85 sm:text-lg">
-                  Acumula estampillas en cada visita y desbloquea descuentos exclusivos.
-                </p>
-              </div>
+            <Reveal>
+              <a
+                href={CLUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Únete al Club Take's — abre el registro"
+                className="animate-glow-ring group relative block overflow-hidden rounded-3xl shadow-2xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_25px_70px_-15px_var(--accent)]"
+              >
+                <div className="relative h-[340px] w-full sm:h-[400px]">
+                  <Image
+                    src="/images/cat-sushi-rolls.png"
+                    alt="Rolls de sushi de TAKE'S bañados en salsa"
+                    fill
+                    priority
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    sizes="(max-width: 1280px) 100vw, 1280px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+                </div>
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white backdrop-blur-sm">
+                    <Sparkles className="h-3.5 w-3.5 text-accent" />
+                    Club de beneficios
+                  </span>
+                  <h1 className="mt-5 text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+                    Únete al Club Take&apos;s
+                  </h1>
+                  <p className="mx-auto mt-4 max-w-xl text-pretty text-base leading-relaxed text-white/85 sm:text-lg">
+                    Acumula estampillas en cada visita y desbloquea descuentos exclusivos.
+                  </p>
+                  <span className="mt-6 inline-flex animate-bounce-y items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wide text-accent-foreground shadow-lg shadow-accent/40">
+                    Toca para unirte
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
+                </div>
+              </a>
             </Reveal>
           </div>
         </section>
