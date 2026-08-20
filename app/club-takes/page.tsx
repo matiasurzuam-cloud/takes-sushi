@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { FloatingWhatsapp } from '@/components/floating-whatsapp'
 import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
 import { getContent } from '@/lib/content'
@@ -314,6 +315,7 @@ export default async function ClubTakesPage() {
         </section>
       </main>
       <SiteFooter content={content} />
+      <FloatingWhatsapp whatsappNumber={content.contacto.redes.whatsapp} />
     </>
   )
 }

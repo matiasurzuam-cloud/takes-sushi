@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { FloatingWhatsapp } from '@/components/floating-whatsapp'
 import { PromotionsGrid } from '@/components/promotions-grid'
 import { getContent } from '@/lib/content'
 
@@ -36,6 +37,7 @@ export default async function PromocionesPage() {
         </section>
       </main>
       <SiteFooter content={content} />
+      <FloatingWhatsapp whatsappNumber={content.contacto.redes.whatsapp} />
     </>
   )
 }

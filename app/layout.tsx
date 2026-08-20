@@ -15,7 +15,15 @@ const inter = Inter({
   subsets: ['latin'],
 })
 
+// Sin esto, Next arma las URLs absolutas de las imágenes Open Graph (ver
+// app/**/opengraph-image.tsx) contra "localhost:3000" incluso en
+// producción — hay que darle un dominio real para que resuelvan bien.
+// `NEXT_PUBLIC_SITE_URL` queda como override opcional para el día que haya
+// dominio propio, sin tener que tocar código.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://takes-sushi-mauve.vercel.app'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "TAKE'S — Sushi & Coffee",
   description:
     "TAKE'S Sushi & Coffee — sushi fresco de autor y café de especialidad. Rolls, hosomakis, california y más, preparados al momento con ingredientes de primera.",

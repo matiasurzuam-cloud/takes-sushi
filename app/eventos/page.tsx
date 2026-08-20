@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Calendar, MapPin, PartyPopper } from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { FloatingWhatsapp } from '@/components/floating-whatsapp'
 import { Reveal } from '@/components/reveal'
 import { EventoReservar } from '@/components/evento-reservar'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -205,6 +206,7 @@ export default async function EventosPage() {
         )}
       </main>
       <SiteFooter content={content} />
+      <FloatingWhatsapp whatsappNumber={content.contacto.redes.whatsapp} />
     </>
   )
 }

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Calendar } from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { FloatingWhatsapp } from '@/components/floating-whatsapp'
 import { Reveal } from '@/components/reveal'
 import { ReservaForm } from '@/components/reserva-form'
 import { SmartImage } from '@/components/ui/smart-image'
@@ -72,6 +73,7 @@ export default async function ReservasPage() {
         </section>
       </main>
       <SiteFooter content={content} />
+      <FloatingWhatsapp whatsappNumber={content.contacto.redes.whatsapp} />
     </>
   )
 }

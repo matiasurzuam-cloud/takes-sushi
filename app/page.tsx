@@ -9,6 +9,7 @@ import { FaqSection } from '@/components/faq-section'
 import { ClubBeneficiosSection } from '@/components/club-beneficios-section'
 import { ContactSection } from '@/components/contact-section'
 import { SiteFooter } from '@/components/site-footer'
+import { FloatingWhatsapp } from '@/components/floating-whatsapp'
 import { getContent } from '@/lib/content'
 
 // El contenido viene de Supabase (tablas galeria/resenas/site_config) y se
@@ -36,6 +37,7 @@ export default async function Home() {
         <ContactSection content={content} />
       </main>
       <SiteFooter content={content} />
+      <FloatingWhatsapp whatsappNumber={content.contacto.redes.whatsapp} />
     </>
   )
 }
