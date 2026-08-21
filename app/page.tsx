@@ -27,13 +27,13 @@ export default async function Home() {
       <SiteHeader />
       <main>
         <HeroSection content={content} />
+        <ClubBeneficiosSection content={content} />
         <AboutSection />
         <MenuSection whatsappNumber={content.contacto.redes.whatsapp} />
         <PromotionsSection content={content} />
         <GallerySection content={content} />
         <TestimonialsSection content={content} />
         <FaqSection />
-        <ClubBeneficiosSection content={content} />
         <ContactSection content={content} />
       </main>
       <SiteFooter content={content} />
