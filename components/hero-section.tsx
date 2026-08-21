@@ -48,7 +48,7 @@ export function HeroSection({ content }: { content: SiteContent }) {
       className="relative flex min-h-screen items-center overflow-hidden"
     >
       <div className="absolute inset-0">
-        <HeroParallaxBg />
+        <HeroParallaxBg imageSrc={content.heroFondo.imagen} />
         <div className="absolute inset-0 bg-gradient-to-r from-scrim/94 via-scrim/82 to-scrim/55" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
 

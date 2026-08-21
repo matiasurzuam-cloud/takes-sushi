@@ -53,6 +53,9 @@ import { MENU_CATEGORIES_CONFIG_ID } from '@/lib/menu/categories'
  *   desde /admin/carta. Solo trae las categorías que el admin haya
  *   personalizado; las demás siguen usando su imagen por defecto hardcoded
  *   en components/menu-section.tsx.
+ * - heroFondo: { imagen } — otra fila singleton en site_config (id
+ *   "hero_fondo"), editable desde /admin/inicio. `imagen` vacío = usa la
+ *   imagen por defecto hardcoded en components/hero-parallax-bg.tsx.
  */
 export type CategoriaGaleria = 'sushi' | 'cafe' | 'local'
 
@@ -114,6 +117,10 @@ export interface ClubBeneficios {
 
 export type MenuCategoryImages = Record<string, string>
 
+export interface HeroFondo {
+  imagen: string
+}
+
 export interface SiteContent {
   galeria: FotoGaleria[]
   resenas: Resena[]
@@ -121,6 +128,7 @@ export interface SiteContent {
   contacto: ContactoInfo
   clubBeneficios: ClubBeneficios
   menuCategoryImages: MenuCategoryImages
+  heroFondo: HeroFondo
 }
 
 const DEFAULT_CONFIANZA: Confianza = { texto: '', rating: 0, resenasCount: 0 }
@@ -140,6 +148,8 @@ const DEFAULT_CLUB_BENEFICIOS: ClubBeneficios = {
   link: '',
   textoBoton: 'Unirme al Club',
 }
+
+const DEFAULT_HERO_FONDO: HeroFondo = { imagen: '' }
 
 interface FotoRow {
   id: string
@@ -216,5 +226,6 @@ export async function getContent(): Promise<SiteContent> {
       ...(configById.get('club_beneficios') as Partial<ClubBeneficios>),
     },
     menuCategoryImages: (configById.get(MENU_CATEGORIES_CONFIG_ID) as MenuCategoryImages) ?? {},
+    heroFondo: { ...DEFAULT_HERO_FONDO, ...(configById.get('hero_fondo') as Partial<HeroFondo>) },
   }
 }

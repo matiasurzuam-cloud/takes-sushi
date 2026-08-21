@@ -21,6 +21,7 @@ export const config = {
     '/api/galeria',
     '/api/galeria/:path*',
     '/api/menu-categorias',
+    '/api/hero-imagen',
   ],
 }
 
