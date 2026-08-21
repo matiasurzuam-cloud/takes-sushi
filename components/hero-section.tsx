@@ -1,9 +1,10 @@
-import { Star, Leaf, Clock, ChevronDown, MessageCircle, Sparkles } from 'lucide-react'
+import { Star, Clock, ChevronDown, MessageCircle, Sparkles } from 'lucide-react'
 import { HeroPromoBanner } from '@/components/hero-promo-banner'
 import { HeroParallaxBg } from '@/components/hero-parallax-bg'
 import { Button } from '@/components/ui/button'
 import { OpenNowBadge } from '@/components/open-now-badge'
 import { HeroCartaButton } from '@/components/hero-carta-button'
+import { HeroVeganStat } from '@/components/hero-vegan-stat'
 import type { Confianza, SiteContent } from '@/lib/content'
 
 // Badge de confianza junto al CTA principal. Prioriza un rating real (ej.
@@ -114,22 +115,19 @@ export function HeroSection({ content }: { content: SiteContent }) {
               className="animate-fade-in-up mt-10 grid max-w-lg grid-cols-3 gap-4"
               style={{ animationDelay: '0.58s' }}
             >
-              {[
-                { icon: Star, label: 'Calidad premium', value: 'Selección diaria' },
-                { icon: Leaf, label: 'Opciones veganas', value: 'Disponibles' },
-                { icon: Clock, label: 'Listo en minutos', value: 'Al instante' },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:bg-white/10 sm:p-4"
-                >
-                  <item.icon className="h-5 w-5 text-brand" />
-                  <dt className="mt-2 text-sm font-semibold text-white">
-                    {item.label}
-                  </dt>
-                  <dd className="text-xs text-white/60">{item.value}</dd>
-                </div>
-              ))}
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:bg-white/10 sm:p-4">
+                <Star className="h-5 w-5 text-brand" />
+                <dt className="mt-2 text-sm font-semibold text-white">Calidad premium</dt>
+                <dd className="text-xs text-white/60">Selección diaria</dd>
+              </div>
+              {/* Único stat clicable de los tres: lleva directo a la pestaña
+                  "Vegano" de la carta — ver components/hero-vegan-stat.tsx. */}
+              <HeroVeganStat />
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:bg-white/10 sm:p-4">
+                <Clock className="h-5 w-5 text-brand" />
+                <dt className="mt-2 text-sm font-semibold text-white">Listo en minutos</dt>
+                <dd className="text-xs text-white/60">Al instante</dd>
+              </div>
             </dl>
           </div>
 

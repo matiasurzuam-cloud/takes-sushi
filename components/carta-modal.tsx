@@ -14,6 +14,13 @@ export const TOTEAT_URL = "https://toteat.shop/r/cl/Take's/21730/checkin/menu"
 export const MENU_UNLOCK_KEY = 'takes-menu-unlocked'
 export const MENU_UNLOCK_EVENT = 'takes:menu-unlock'
 
+// Mismo par key/evento que MENU_UNLOCK_*, pero para saltar directo a una
+// pestaña de la carta (ej. el stat "Opciones veganas" del Hero → pestaña
+// "Vegano") en vez de solo destrabar el gate. La key cubre llegar a "/#carta"
+// desde otra página; el evento cubre estar ya en "/" (ver hero-vegan-stat.tsx).
+export const MENU_SELECT_CATEGORY_KEY = 'takes-menu-select-category'
+export const MENU_SELECT_CATEGORY_EVENT = 'takes:menu-select-category'
+
 export function CartaModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null
 

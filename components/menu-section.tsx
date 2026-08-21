@@ -7,7 +7,13 @@ import { cn } from '@/lib/utils'
 import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
 import { SmartImage } from '@/components/ui/smart-image'
-import { TOTEAT_URL, MENU_UNLOCK_KEY, MENU_UNLOCK_EVENT } from '@/components/carta-modal'
+import {
+  TOTEAT_URL,
+  MENU_UNLOCK_KEY,
+  MENU_UNLOCK_EVENT,
+  MENU_SELECT_CATEGORY_KEY,
+  MENU_SELECT_CATEGORY_EVENT,
+} from '@/components/carta-modal'
 import { celebrate } from '@/lib/confetti'
 
 type MenuItem = {
@@ -1509,15 +1515,32 @@ export function MenuSection({
   const [checkoutOpen, setCheckoutOpen] = useState(false)
 
   // Si llegaste acá desde el modal "Pedir para delivery" (hero/nav/footer),
-  // ya elegiste tu modalidad — evita preguntarte de nuevo.
+  // ya elegiste tu modalidad — evita preguntarte de nuevo. Mismo mecanismo
+  // para saltar directo a una pestaña (ej. el stat "Opciones veganas" del
+  // Hero → pestaña "Vegano", ver hero-vegan-stat.tsx): key de sessionStorage
+  // para cuando recién se llega a "/#carta", evento para cuando ya se está
+  // en "/" y el link solo cambia el hash sin remontar este componente.
   useEffect(() => {
     if (window.sessionStorage.getItem(MENU_UNLOCK_KEY) === '1') {
       window.sessionStorage.removeItem(MENU_UNLOCK_KEY)
       setUnlocked(true)
     }
+    const selectedCategory = window.sessionStorage.getItem(MENU_SELECT_CATEGORY_KEY)
+    if (selectedCategory) {
+      window.sessionStorage.removeItem(MENU_SELECT_CATEGORY_KEY)
+      setActive(selectedCategory)
+    }
     const onUnlockEvent = () => setUnlocked(true)
+    const onSelectCategoryEvent = (e: Event) => {
+      const categoryId = (e as CustomEvent<string>).detail
+      if (categoryId) setActive(categoryId)
+    }
     window.addEventListener(MENU_UNLOCK_EVENT, onUnlockEvent)
-    return () => window.removeEventListener(MENU_UNLOCK_EVENT, onUnlockEvent)
+    window.addEventListener(MENU_SELECT_CATEGORY_EVENT, onSelectCategoryEvent)
+    return () => {
+      window.removeEventListener(MENU_UNLOCK_EVENT, onUnlockEvent)
+      window.removeEventListener(MENU_SELECT_CATEGORY_EVENT, onSelectCategoryEvent)
+    }
   }, [])
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null)
   const [sectorId, setSectorId] = useState<string | null>(null)
