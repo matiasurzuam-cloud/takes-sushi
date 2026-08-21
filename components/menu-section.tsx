@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Leaf, Flame, Plus, Minus, ShoppingBag, Store, Bike, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
+import { SmartImage } from '@/components/ui/smart-image'
 import { TOTEAT_URL, MENU_UNLOCK_KEY, MENU_UNLOCK_EVENT } from '@/components/carta-modal'
 import { celebrate } from '@/lib/confetti'
 
@@ -1473,7 +1473,15 @@ function CheckoutModal({
   )
 }
 
-export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
+export function MenuSection({
+  whatsappNumber,
+  categoryImages,
+}: {
+  whatsappNumber: string
+  /** Overrides desde /admin/carta (site_config → menu_categorias). Una
+   * categoría sin entrada acá sigue usando su `image` hardcoded de arriba. */
+  categoryImages?: Record<string, string>
+}) {
   const [unlocked, setUnlocked] = useState(false)
   const [active, setActive] = useState(categories[0].id)
   const [cart, setCart] = useState<Record<string, CartEntry>>({})
@@ -1641,8 +1649,8 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
             <Reveal className="mt-10">
               <div className="relative overflow-hidden rounded-3xl">
                 <div className="relative aspect-[16/7] w-full sm:aspect-[16/5]">
-                  <Image
-                    src={current.image || '/placeholder.svg'}
+                  <SmartImage
+                    src={categoryImages?.[current.id] || current.image || '/placeholder.svg'}
                     alt={current.label}
                     fill
                     className="object-cover"

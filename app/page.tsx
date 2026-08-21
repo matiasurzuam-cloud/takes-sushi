@@ -48,7 +48,10 @@ export default async function Home() {
         <ClubBeneficiosSection content={content} />
         <EventosBannerSection />
         <AboutSection />
-        <MenuSection whatsappNumber={content.contacto.redes.whatsapp} />
+        <MenuSection
+          whatsappNumber={content.contacto.redes.whatsapp}
+          categoryImages={content.menuCategoryImages}
+        />
         <PromotionsSection content={content} />
         <GallerySection content={content} />
         <TestimonialsSection content={content} />

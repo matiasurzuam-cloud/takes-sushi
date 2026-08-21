@@ -20,6 +20,7 @@ export const config = {
     '/api/eventos/:path*',
     '/api/galeria',
     '/api/galeria/:path*',
+    '/api/menu-categorias',
   ],
 }
 

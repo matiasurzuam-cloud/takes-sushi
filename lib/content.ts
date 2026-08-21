@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { MENU_CATEGORIES_CONFIG_ID } from '@/lib/menu/categories'
 
 /**
  * Contenido editable del sitio (galería, reseñas y datos de contacto),
@@ -47,6 +48,11 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
  *   sección no se renderiza (ni vacía). Pensado para un sistema externo de
  *   puntos/tracking que todavía no existe: `link` arranca vacío y se carga
  *   más adelante desde Supabase Studio — sin necesidad de tocar código.
+ * - menuCategoryImages: { [categoryId]: imagenUrl } — otra fila singleton en
+ *   site_config (id "menu_categorias", ver lib/menu/categories.ts), editable
+ *   desde /admin/carta. Solo trae las categorías que el admin haya
+ *   personalizado; las demás siguen usando su imagen por defecto hardcoded
+ *   en components/menu-section.tsx.
  */
 export type CategoriaGaleria = 'sushi' | 'cafe' | 'local'
 
@@ -106,12 +112,15 @@ export interface ClubBeneficios {
   textoBoton: string
 }
 
+export type MenuCategoryImages = Record<string, string>
+
 export interface SiteContent {
   galeria: FotoGaleria[]
   resenas: Resena[]
   confianza: Confianza
   contacto: ContactoInfo
   clubBeneficios: ClubBeneficios
+  menuCategoryImages: MenuCategoryImages
 }
 
 const DEFAULT_CONFIANZA: Confianza = { texto: '', rating: 0, resenasCount: 0 }
@@ -206,5 +215,6 @@ export async function getContent(): Promise<SiteContent> {
       ...DEFAULT_CLUB_BENEFICIOS,
       ...(configById.get('club_beneficios') as Partial<ClubBeneficios>),
     },
+    menuCategoryImages: (configById.get(MENU_CATEGORIES_CONFIG_ID) as MenuCategoryImages) ?? {},
   }
 }
