@@ -2,11 +2,13 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
+import { motion } from 'framer-motion'
 import { Leaf, Flame, Plus, Minus, ShoppingBag, Store, Bike, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
 import { TOTEAT_URL, MENU_UNLOCK_KEY, MENU_UNLOCK_EVENT } from '@/components/carta-modal'
+import { celebrate } from '@/lib/confetti'
 
 type MenuItem = {
   name: string
@@ -1541,8 +1543,14 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
     }
 
     const message = encodeURIComponent(lines.join('\n'))
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank')
     setCheckoutOpen(false)
+    celebrate()
+    // Deja ver la ráfaga de confetti un instante antes de saltar a WhatsApp
+    // (que le quita el foco a esta pestaña) — si abriera al toque, casi
+    // nadie llegaría a verla.
+    window.setTimeout(() => {
+      window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank')
+    }, 500)
   }
 
   return (
@@ -1565,7 +1573,9 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
           <MenuGate onUnlock={() => setUnlocked(true)} />
         ) : (
           <>
-            {/* Category tabs */}
+            {/* Category tabs — el fondo activo es un solo elemento compartido
+                (layoutId) que Framer Motion desliza entre pestañas en vez de
+                aparecer/desaparecer de golpe en cada botón. */}
             <Reveal className="mt-10 flex flex-wrap justify-center gap-2.5">
               {categories.map((cat) => (
                 <button
@@ -1573,13 +1583,22 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
                   type="button"
                   onClick={() => setActive(cat.id)}
                   className={cn(
-                    'rounded-full px-5 py-2.5 text-sm font-semibold transition-all',
+                    'group relative rounded-full px-5 py-2.5 text-sm font-semibold transition-colors',
                     active === cat.id
-                      ? 'bg-brand text-brand-foreground shadow-lg shadow-brand/25'
-                      : 'bg-card text-muted-foreground hover:bg-brand/10 hover:text-foreground',
+                      ? 'text-brand-foreground'
+                      : 'text-muted-foreground hover:text-foreground',
                   )}
                 >
-                  {cat.label}
+                  {active === cat.id ? (
+                    <motion.span
+                      layoutId="menu-category-pill"
+                      className="absolute inset-0 rounded-full bg-brand shadow-lg shadow-brand/25"
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    />
+                  ) : (
+                    <span className="absolute inset-0 rounded-full bg-card transition-colors group-hover:bg-brand/10" />
+                  )}
+                  <span className="relative">{cat.label}</span>
                 </button>
               ))}
             </Reveal>

@@ -1,6 +1,6 @@
-import Image from 'next/image'
 import { Star, Leaf, Clock, ChevronDown, MessageCircle, Sparkles } from 'lucide-react'
 import { HeroPromoBanner } from '@/components/hero-promo-banner'
+import { HeroParallaxBg } from '@/components/hero-parallax-bg'
 import { Button } from '@/components/ui/button'
 import { OpenNowBadge } from '@/components/open-now-badge'
 import { HeroCartaButton } from '@/components/hero-carta-button'
@@ -47,16 +47,7 @@ export function HeroSection({ content }: { content: SiteContent }) {
       className="relative flex min-h-screen items-center overflow-hidden"
     >
       <div className="absolute inset-0">
-        <div className="absolute inset-0 overflow-hidden">
-          <Image
-            src="/images/hero-sushi.png"
-            alt="Variedad de sushi fresco preparado en TAKE'S"
-            fill
-            priority
-            className="animate-kenburns object-cover"
-            sizes="100vw"
-          />
-        </div>
+        <HeroParallaxBg />
         <div className="absolute inset-0 bg-gradient-to-r from-scrim/94 via-scrim/82 to-scrim/55" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
 
