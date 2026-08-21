@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import Image from 'next/image'
 import { ArrowRight, Calendar, MapPin, PartyPopper } from 'lucide-react'
 import { Reveal } from '@/components/reveal'
@@ -5,6 +7,21 @@ import { PromoCountdown } from '@/components/promo-popup/promo-countdown'
 import { formatFechaEvento } from '@/lib/eventos/format'
 import { eventosRepo } from '@/lib/eventos/store'
 import { addOneDayISO, santiagoMidnightUtcMs } from '@/lib/timezone'
+
+// Imagen de marca fija para este banner (diseñada a 1920x640, ver
+// components/eventos-banner-section.tsx en el historial) — a diferencia de
+// la foto propia de cada evento (que sigue viviendo en /admin/eventos y se
+// usa en /eventos), acá siempre se muestra la misma pieza gráfica sin
+// depender de qué evento esté cargado. Mismo patrón de extensión flexible
+// que club-qr-popup: mientras no se suba el archivo, cae a la foto del
+// evento en vez de romper.
+function findBannerImage(): string | null {
+  for (const ext of ['png', 'jpg', 'jpeg', 'webp']) {
+    const src = `/images/eventos-banner/takes_banner_1920x640.${ext}`
+    if (existsSync(join(process.cwd(), 'public', src))) return src
+  }
+  return null
+}
 
 // Banner del próximo evento en la home — mismo tratamiento "hero" que el
 // de /club-takes (imagen + degradado + texto centrado + CTA), pero el
@@ -18,6 +35,7 @@ export async function EventosBannerSection() {
   if (!proximo) return null
 
   const targetMs = santiagoMidnightUtcMs(addOneDayISO(proximo.fecha))
+  const bannerImage = findBannerImage() ?? proximo.imagen
 
   return (
     <section className="py-16 sm:py-20">
@@ -29,7 +47,7 @@ export async function EventosBannerSection() {
           >
             <div className="relative h-[340px] w-full sm:h-[400px]">
               <Image
-                src={proximo.imagen}
+                src={bannerImage}
                 alt={proximo.titulo}
                 fill
                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
