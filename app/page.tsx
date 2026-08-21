@@ -25,12 +25,16 @@ export const revalidate = 60
 // Igual que las capturas de club-pasos: archivo estático en public/, fuera
 // de Supabase — `existsSync` corre acá (Server Component) porque
 // ClubQrPopup es 'use client' y no puede tocar node:fs. Mientras no se
-// suba el archivo, el pop-up simplemente no aparece.
-const CLUB_QR_POPUP_IMAGE = existsSync(
-  join(process.cwd(), 'public', 'images', 'club-popup', 'club-qr1.png'),
-)
-  ? '/images/club-popup/club-qr1.png'
-  : null
+// suba el archivo, el pop-up simplemente no aparece. Prueba varias
+// extensiones (no solo .png) para no depender de con cuál se suba.
+function findClubQrPopupImage(): string | null {
+  for (const ext of ['png', 'jpg', 'jpeg', 'webp']) {
+    const src = `/images/club-popup/club-qr1.${ext}`
+    if (existsSync(join(process.cwd(), 'public', src))) return src
+  }
+  return null
+}
+const CLUB_QR_POPUP_IMAGE = findClubQrPopupImage()
 
 export default async function Home() {
   const content = await getContent()
