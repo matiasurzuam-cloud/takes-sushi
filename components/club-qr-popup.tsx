@@ -81,16 +81,22 @@ export function ClubQrPopup({ imageSrc, delayMs = 9000 }: ClubQrPopupProps) {
               onClick={close}
               className="group block"
             >
-              <div className="bg-white p-6 pb-4">
-                <div className="relative mx-auto aspect-square w-full max-w-[260px]">
-                  <Image
-                    src={imageSrc}
-                    alt="Código QR para unirte al Club Take's"
-                    fill
-                    className="object-contain"
-                    sizes="260px"
-                  />
-                </div>
+              {/* aspect-ratio calcado de la imagen real (771×995) para que
+                  encaje exacto — ni recorta (object-cover en un marco
+                  distinto) ni deja espacios en blanco (object-contain en un
+                  marco cuadrado). El borde grueso de color hace de "marco"
+                  en vez de la caja blanca que tenía antes. */}
+              <div
+                className="relative w-full overflow-hidden border-[6px] border-brand"
+                style={{ aspectRatio: '771 / 995' }}
+              >
+                <Image
+                  src={imageSrc}
+                  alt="Código QR para unirte al Club Take's"
+                  fill
+                  className="object-cover"
+                  sizes="24rem"
+                />
               </div>
               <div className="p-6 pt-4 text-center">
                 <p className="text-lg font-extrabold text-foreground">Únete al Club Take&apos;s</p>
