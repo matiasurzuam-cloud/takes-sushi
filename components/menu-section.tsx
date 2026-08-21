@@ -18,6 +18,14 @@ type MenuItem = {
   vegan?: boolean
 }
 
+// Un ítem tal como se muestra en una lista, con su categoría de origen ya
+// resuelta — necesario porque la pestaña "Vegano" mezcla ítems de varias
+// categorías reales (sushi, entradas, almuerzo…) en una sola vista, pero
+// cada uno debe seguir apuntando a SU categoría real: así el carrito no
+// duplica el mismo plato si se agrega desde ambas pestañas, y el pedido de
+// WhatsApp lo agrupa bajo su sección real en vez de bajo "Vegano".
+type MenuItemWithCategory = MenuItem & { categoryId: string }
+
 type Promo = {
   title: string
   detail?: string
@@ -1053,6 +1061,27 @@ const categories: Category[] = [
   },
 ]
 
+const VEGAN_ITEMS: MenuItemWithCategory[] = categories.flatMap((cat) =>
+  cat.items.filter((item) => item.vegan).map((item) => ({ ...item, categoryId: cat.id })),
+)
+
+// Pestaña anexa que reúne todas las opciones veganas de toda la carta en un
+// solo lugar — no es una categoría real propia (no tiene sección en el
+// pedido de WhatsApp), es solo una vista filtrada de las categorías de
+// arriba. Por eso no se agrega a `categories`, solo a `allCategories` más
+// abajo (usado para las pestañas y el banner, nunca para agrupar el pedido).
+const VEGAN_CATEGORY_ID = 'vegano'
+
+const veganCategory: Category = {
+  id: VEGAN_CATEGORY_ID,
+  label: 'Vegano',
+  note: `${VEGAN_ITEMS.length} opciones 100% veganas de toda la carta`,
+  image: '/images/cat-sushi-rolls.png',
+  items: VEGAN_ITEMS,
+}
+
+const allCategories: Category[] = [veganCategory, ...categories]
+
 function Badges({ item }: { item: MenuItem }) {
   if (!item.top && !item.vegan) return null
   return (
@@ -1126,13 +1155,11 @@ function QuantityControl({
 
 function ListLayout({
   items,
-  categoryId,
   getQty,
   onAdd,
   onRemove,
 }: {
-  items: MenuItem[]
-  categoryId: string
+  items: MenuItemWithCategory[]
   getQty: (id: string) => number
   onAdd: (id: string, item: MenuItem, categoryId: string) => void
   onRemove: (id: string) => void
@@ -1140,10 +1167,10 @@ function ListLayout({
   return (
     <div className="mt-10 grid gap-x-12 gap-y-1 md:grid-cols-2">
       {items.map((item, i) => {
-        const id = `${categoryId}__${item.name}`
+        const id = `${item.categoryId}__${item.name}`
         const qty = getQty(id)
         return (
-          <Reveal key={item.name} delay={(i % 2) * 60}>
+          <Reveal key={id} delay={(i % 2) * 60}>
             <div
               className={cn(
                 'group border-b py-4 transition-colors',
@@ -1172,7 +1199,7 @@ function ListLayout({
                 <QuantityControl
                   qty={qty}
                   label={item.name}
-                  onAdd={() => onAdd(id, item, categoryId)}
+                  onAdd={() => onAdd(id, item, item.categoryId)}
                   onRemove={() => onRemove(id)}
                 />
               </div>
@@ -1466,7 +1493,14 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null)
   const [sectorId, setSectorId] = useState<string | null>(null)
   const [otroDetalle, setOtroDetalle] = useState('')
-  const current = categories.find((c) => c.id === active) ?? categories[0]
+  const current = allCategories.find((c) => c.id === active) ?? allCategories[0]
+  // La pestaña "Vegano" ya trae sus ítems con `categoryId` propio (uno por
+  // cada categoría real de origen); las demás pestañas son de una sola
+  // categoría, así que se les agrega el mismo categoryId a todos sus ítems.
+  const currentItems: MenuItemWithCategory[] =
+    current.id === VEGAN_CATEGORY_ID
+      ? (current.items as MenuItemWithCategory[])
+      : current.items.map((item) => ({ ...item, categoryId: current.id }))
 
   const getQty = (id: string) => cart[id]?.qty ?? 0
 
@@ -1577,7 +1611,7 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
                 (layoutId) que Framer Motion desliza entre pestañas en vez de
                 aparecer/desaparecer de golpe en cada botón. */}
             <Reveal className="mt-10 flex flex-wrap justify-center gap-2.5">
-              {categories.map((cat) => (
+              {allCategories.map((cat) => (
                 <button
                   key={cat.id}
                   type="button"
@@ -1626,8 +1660,7 @@ export function MenuSection({ whatsappNumber }: { whatsappNumber: string }) {
             </Reveal>
 
             <ListLayout
-              items={current.items}
-              categoryId={current.id}
+              items={currentItems}
               getQty={getQty}
               onAdd={addItem}
               onRemove={removeItem}
