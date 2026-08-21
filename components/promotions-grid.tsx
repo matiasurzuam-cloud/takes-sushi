@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { SmartImage } from '@/components/ui/smart-image'
 import { PromoCountdown } from '@/components/promo-popup/promo-countdown'
 import { usePromosVigentes } from '@/components/promo-popup/use-promos-vigentes'
+import { proximoCierreMs } from '@/lib/promociones/vigencia'
 import type { SiteContent } from '@/lib/content'
 
 // Grid de tarjetas de promociones — vivía en components/promotions-section.tsx
@@ -45,39 +46,42 @@ export function PromotionsGrid({ content }: { content: SiteContent }) {
 
   return (
     <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {promos.map((promo, i) => (
-        <Reveal key={promo.id} delay={i * 80}>
-          <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-            <div className="relative h-48 w-full">
-              <SmartImage
-                src={promo.imagenes[0] || '/placeholder.svg'}
-                alt={promo.titulo}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
+      {promos.map((promo, i) => {
+        const cierreMs = proximoCierreMs(promo, new Date())
+        return (
+          <Reveal key={promo.id} delay={i * 80}>
+            <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <div className="relative h-48 w-full">
+                <SmartImage
+                  src={promo.imagenes[0] || '/placeholder.svg'}
+                  alt={promo.titulo}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
+              <div className="flex flex-1 flex-col gap-3 p-6">
+                <h3 className="text-h3">{promo.titulo}</h3>
+                <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
+                  {promo.descripcion}
+                </p>
+                {cierreMs !== null && <PromoCountdown targetMs={cierreMs} />}
+                {promo.link && (
+                  <Button
+                    variant="brand"
+                    size="pill"
+                    className="mt-1 w-fit"
+                    nativeButton={false}
+                    render={<a href={promo.link} />}
+                  >
+                    Ver más
+                  </Button>
+                )}
+              </div>
             </div>
-            <div className="flex flex-1 flex-col gap-3 p-6">
-              <h3 className="text-h3">{promo.titulo}</h3>
-              <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
-                {promo.descripcion}
-              </p>
-              {promo.fechaExpiracion && <PromoCountdown fechaExpiracion={promo.fechaExpiracion} />}
-              {promo.link && (
-                <Button
-                  variant="brand"
-                  size="pill"
-                  className="mt-1 w-fit"
-                  nativeButton={false}
-                  render={<a href={promo.link} />}
-                >
-                  Ver más
-                </Button>
-              )}
-            </div>
-          </div>
-        </Reveal>
-      ))}
+          </Reveal>
+        )
+      })}
     </div>
   )
 }

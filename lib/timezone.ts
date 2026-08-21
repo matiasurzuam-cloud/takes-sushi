@@ -45,6 +45,13 @@ export function getSantiagoParts(now: Date): SantiagoParts {
   }
 }
 
+/** "2026-08-23" -> "2026-08-24". Suma un día calendario a una fecha ISO. */
+export function addOneDayISO(dateISO: string): string {
+  const d = new Date(`${dateISO}T00:00:00.000Z`)
+  d.setUTCDate(d.getUTCDate() + 1)
+  return d.toISOString().slice(0, 10)
+}
+
 /**
  * Instante UTC (en ms) que corresponde a las 00:00:00 de `dateISO`
  * ("YYYY-MM-DD") en hora de Santiago. Usa el truco estándar de "ida y

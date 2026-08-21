@@ -1,4 +1,4 @@
-import { getSantiagoParts } from '@/lib/timezone'
+import { addOneDayISO, getSantiagoParts, santiagoMidnightUtcMs } from '@/lib/timezone'
 import type { Promocion } from './types'
 
 // IMPORTANTE — convención de días: `promo.diasSemana` usa 1=lunes…7=domingo
@@ -44,6 +44,43 @@ export function estaVigenteAhora(promo: Promocion, now: Date): boolean {
   }
 
   return true
+}
+
+/**
+ * Instante (ms) del próximo cierre de la promo — para mostrar un cronómetro
+ * real de "cuánto queda". Dos casos:
+ * - Si está dentro de su ventana horaria diaria ahora mismo (ej. Happy Hour
+ *   17-19hrs), el cierre relevante es el de HOY: más útil como urgencia real
+ *   que fechaExpiracion, que puede ser semanas después y no dice nada sobre
+ *   que la promo deja de verse en un par de horas.
+ * - Si no, cae en fechaExpiracion (fin de ese día) si existe.
+ * - Si no tiene ninguna de las dos, `null` — promo indefinida, sin cronómetro.
+ *
+ * El cálculo de minutos restantes reusa la misma aritmética que
+ * `enRangoHorario` (incluye el soporte para rangos que cruzan medianoche),
+ * pero trabajando en "minutos desde ahora" en vez de fechas de calendario
+ * — así no hay que decidir aparte si el hora_fin cae hoy o mañana.
+ */
+export function proximoCierreMs(promo: Promocion, now: Date): number | null {
+  if (promo.horaInicio && promo.horaFin) {
+    const { hour, minute } = getSantiagoParts(now)
+    const inicio = toMinutes(promo.horaInicio)
+    let fin = toMinutes(promo.horaFin)
+    let actual = hour * 60 + minute
+    if (fin <= inicio) fin += 24 * 60
+    if (actual < inicio) actual += 24 * 60
+
+    if (actual >= inicio && actual < fin) {
+      const minutosRestantes = fin - actual
+      return now.getTime() + minutosRestantes * 60_000
+    }
+  }
+
+  if (promo.fechaExpiracion) {
+    return santiagoMidnightUtcMs(addOneDayISO(promo.fechaExpiracion))
+  }
+
+  return null
 }
 
 /**

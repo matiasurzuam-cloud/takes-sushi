@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { SmartImage } from '@/components/ui/smart-image'
 import { PromoCountdown } from './promo-countdown'
+import { proximoCierreMs } from '@/lib/promociones/vigencia'
 import type { Promocion } from '@/lib/promociones/types'
 
 interface PromoCarouselProps {
@@ -95,6 +96,7 @@ export function PromoCarousel({ promociones, rotationMs = 5000 }: PromoCarouselP
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const promo = promociones[index]
+  const cierreMs = proximoCierreMs(promo, new Date())
 
   const next = useCallback(
     () => setIndex((i) => (i + 1) % promociones.length),
@@ -162,9 +164,9 @@ export function PromoCarousel({ promociones, rotationMs = 5000 }: PromoCarouselP
             <p className="line-clamp-4 text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
               {promo.descripcion}
             </p>
-            {promo.fechaExpiracion && (
+            {cierreMs !== null && (
               <PromoCountdown
-                fechaExpiracion={promo.fechaExpiracion}
+                targetMs={cierreMs}
                 variant={promo.origen === 'evento' ? 'evento' : 'promocion'}
               />
             )}

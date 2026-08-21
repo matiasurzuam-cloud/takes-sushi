@@ -4,6 +4,7 @@ import { Reveal } from '@/components/reveal'
 import { PromoCountdown } from '@/components/promo-popup/promo-countdown'
 import { formatFechaEvento } from '@/lib/eventos/format'
 import { eventosRepo } from '@/lib/eventos/store'
+import { addOneDayISO, santiagoMidnightUtcMs } from '@/lib/timezone'
 
 // Banner del próximo evento en la home — mismo tratamiento "hero" que el
 // de /club-takes (imagen + degradado + texto centrado + CTA), pero el
@@ -15,6 +16,8 @@ import { eventosRepo } from '@/lib/eventos/store'
 export async function EventosBannerSection() {
   const [proximo] = await eventosRepo.getProximos()
   if (!proximo) return null
+
+  const targetMs = santiagoMidnightUtcMs(addOneDayISO(proximo.fecha))
 
   return (
     <section className="py-16 sm:py-20">
@@ -54,7 +57,7 @@ export async function EventosBannerSection() {
                   </span>
                 )}
               </div>
-              <PromoCountdown fechaExpiracion={proximo.fecha} variant="evento" className="mt-4" />
+              <PromoCountdown targetMs={targetMs} variant="evento" className="mt-4" />
               <span className="mt-6 inline-flex items-center gap-1.5 rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-brand-foreground shadow-lg shadow-brand/30 transition-transform duration-300 group-hover:scale-105">
                 Ver evento <ArrowRight className="h-4 w-4" />
               </span>
