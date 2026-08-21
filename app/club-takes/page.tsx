@@ -21,6 +21,7 @@ import { ClubTakesConfetti } from '@/components/club-takes-confetti'
 import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
 import { getContent } from '@/lib/content'
+import { CLUB_URL } from '@/lib/club-url'
 
 export const metadata: Metadata = {
   title: "Club Takes | TAKE'S Sushi & Coffee",
@@ -31,12 +32,6 @@ export const metadata: Metadata = {
 // Sin esto quedaba 100% estática (sin `revalidate` ni `dynamic`, Next la
 // trata como SSG puro) — nunca se habría refrescado tras el primer build.
 export const revalidate = 60
-
-// Registro del club (TrackingTable). El botón usa un link directo al
-// formulario de pase de billetera (con UTM propio del acortador), distinto
-// del que codifica el QR de abajo — ambos llevan al mismo club, solo que
-// por rutas distintas dentro de TrackingTable.
-const CLUB_URL = 'https://app.trackingtable.com/get-wallet-pass/1602?utm_source=url_shortener&url_shortener_id=971'
 
 // Capturas reales del flujo de registro como archivos estáticos — mismo
 // criterio que las reseñas (public/, permanentes, fuera de Supabase). De
