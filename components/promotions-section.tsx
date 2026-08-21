@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, Gift } from 'lucide-react'
+import { Gift, MessageCircle } from 'lucide-react'
 import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -11,9 +11,10 @@ import { proximoCierreMs } from '@/lib/promociones/vigencia'
 import type { SiteContent } from '@/lib/content'
 
 // Banners full-width (imagen + panel de texto) en vez de la grilla chica de
-// antes — se ven más "profesionales" a lo ancho de la página. El detalle
-// completo (con el link propio de cada promo) vive en /promociones
-// (components/promotions-grid.tsx); acá "Ver más" siempre apunta ahí.
+// antes — se ven más "profesionales" a lo ancho de la página. El botón
+// "Solicitar" va directo a WhatsApp con el nombre de la promo precargado
+// (en vez de mandar a /promociones), para no agregar un paso extra entre
+// ver la oferta y preguntar por ella.
 export function PromotionsSection({ content }: { content: SiteContent }) {
   const { promos } = usePromosVigentes()
   const { contacto } = content
@@ -50,6 +51,10 @@ export function PromotionsSection({ content }: { content: SiteContent }) {
           <div className="mt-12 space-y-6">
             {promos.map((promo, i) => {
               const cierreMs = proximoCierreMs(promo, new Date())
+              const mensaje = encodeURIComponent(
+                `Hola! Me interesa la promoción "${promo.titulo}". ¿Me pueden dar más detalles?`,
+              )
+              const whatsappHref = `https://wa.me/${contacto.redes.whatsapp}?text=${mensaje}`
               return (
                 <Reveal key={promo.id} delay={i * 80}>
                   <div className="relative overflow-hidden rounded-3xl border border-border bg-card shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
@@ -77,9 +82,9 @@ export function PromotionsSection({ content }: { content: SiteContent }) {
                           size="pill"
                           className="mt-1 w-fit"
                           nativeButton={false}
-                          render={<a href="/promociones" />}
+                          render={<a href={whatsappHref} target="_blank" rel="noopener noreferrer" />}
                         >
-                          Ver más <ArrowRight className="h-4 w-4" />
+                          Solicitar <MessageCircle className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
