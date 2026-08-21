@@ -1,8 +1,18 @@
-import { Camera, MessageCircle } from 'lucide-react'
+'use client'
 
-// Burbujas persistentes en todo el sitio público (no en /admin). Sin
-// 'use client': son solo <a>, no necesitan estado ni hooks del navegador,
-// así que un Server Component puede renderizarlas directo.
+import { useEffect, useState } from 'react'
+import { Camera, MessageCircle } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+// Burbujas persistentes en todo el sitio público (no en /admin).
+//
+// Ocultas hasta pasar unos ~320px de scroll: en mobile, con la altura justa
+// del Hero de la home, quedaban tapando el botón "Ver la carta" y las
+// tarjetas de estadísticas (Calidad premium, etc.) apenas cargaba la
+// página — un choque de posición fija contra contenido real, no solo un
+// detalle estético. Aparecen recién cuando el usuario empieza a bajar,
+// patrón común en botones de contacto flotantes y evita el problema en
+// cualquier página sin tener que coordinar layouts caso por caso.
 //
 // z-40 (uno por debajo de la barra flotante del carrito en menu-section.tsx,
 // que es z-50 e inset-x-0): en mobile esa barra ocupa casi todo el ancho
@@ -22,10 +32,24 @@ export function FloatingSocial({
   whatsappNumber: string
   instagramUrl: string
 }) {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 320)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   if (!whatsappNumber && !instagramUrl) return null
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-center gap-3">
+    <div
+      className={cn(
+        'fixed bottom-6 right-6 z-40 flex flex-col items-center gap-3 transition-all duration-300',
+        visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0',
+      )}
+    >
       {whatsappNumber && (
         <a
           href={`https://wa.me/${whatsappNumber}`}

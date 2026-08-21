@@ -9,6 +9,7 @@ import { GallerySection } from '@/components/gallery-section'
 import { TestimonialsSection } from '@/components/testimonials-section'
 import { FaqSection } from '@/components/faq-section'
 import { ClubBeneficiosSection } from '@/components/club-beneficios-section'
+import { EventosBannerSection } from '@/components/eventos-banner-section'
 import { ContactSection } from '@/components/contact-section'
 import { SiteFooter } from '@/components/site-footer'
 import { FloatingSocial } from '@/components/floating-social'
@@ -45,6 +46,7 @@ export default async function Home() {
       <main>
         <HeroSection content={content} />
         <ClubBeneficiosSection content={content} />
+        <EventosBannerSection />
         <AboutSection />
         <MenuSection whatsappNumber={content.contacto.redes.whatsapp} />
         <PromotionsSection content={content} />
