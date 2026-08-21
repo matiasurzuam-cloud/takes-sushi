@@ -1300,6 +1300,8 @@ function CheckoutModal({
   onSelectSector,
   otroDetalle,
   onChangeOtroDetalle,
+  notas,
+  onChangeNotas,
   onConfirm,
 }: {
   open: boolean
@@ -1312,6 +1314,8 @@ function CheckoutModal({
   onSelectSector: (id: string) => void
   otroDetalle: string
   onChangeOtroDetalle: (value: string) => void
+  notas: string
+  onChangeNotas: (value: string) => void
   onConfirm: () => void
 }) {
   if (!open) return null
@@ -1429,7 +1433,24 @@ function CheckoutModal({
           </div>
         )}
 
-        <div className="mt-6 space-y-1 rounded-2xl bg-secondary/40 p-4">
+        <div className="mt-5 space-y-1.5">
+          <label htmlFor="notas-pedido" className="text-xs font-semibold text-muted-foreground">
+            Notas del pedido (opcional)
+          </label>
+          <textarea
+            id="notas-pedido"
+            rows={2}
+            value={notas}
+            onChange={(e) => onChangeNotas(e.target.value)}
+            placeholder="Ej. sin cebolla en el California, sin palta en el Vegui Maki, alergia a los mariscos…"
+            className="w-full resize-none rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand focus:ring-2 focus:ring-brand/30"
+          />
+          <p className="text-xs text-muted-foreground">
+            Si quieres sacar algún ingrediente o avisar algo especial, indícalo aquí.
+          </p>
+        </div>
+
+        <div className="mt-4 space-y-1 rounded-2xl bg-secondary/40 p-4">
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>
               {totalItems} {totalItems === 1 ? 'producto' : 'productos'}
@@ -1501,6 +1522,7 @@ export function MenuSection({
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null)
   const [sectorId, setSectorId] = useState<string | null>(null)
   const [otroDetalle, setOtroDetalle] = useState('')
+  const [notas, setNotas] = useState('')
   const current = allCategories.find((c) => c.id === active) ?? allCategories[0]
   // La pestaña "Vegano" ya trae sus ítems con `categoryId` propio (uno por
   // cada categoría real de origen); las demás pestañas son de una sola
@@ -1582,6 +1604,9 @@ export function MenuSection({
     lines.push(`*Total a pagar: ${formatPrice(grandTotal)}*`)
     if (deliveryMethod === 'delivery' && selectedSector?.price === null) {
       lines.push('_(no incluye el costo de delivery, se confirma por WhatsApp)_')
+    }
+    if (notas.trim()) {
+      lines.push('', `*Notas: ${notas.trim()}*`)
     }
 
     const message = encodeURIComponent(lines.join('\n'))
@@ -1728,6 +1753,8 @@ export function MenuSection({
         onSelectSector={setSectorId}
         otroDetalle={otroDetalle}
         onChangeOtroDetalle={setOtroDetalle}
+        notas={notas}
+        onChangeNotas={setNotas}
         onConfirm={sendOrder}
       />
     </section>
