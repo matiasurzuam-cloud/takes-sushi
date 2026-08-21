@@ -17,6 +17,7 @@ import {
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { FloatingSocial } from '@/components/floating-social'
+import { ClubTakesConfetti } from '@/components/club-takes-confetti'
 import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
 import { getContent } from '@/lib/content'
@@ -106,6 +107,7 @@ export default async function ClubTakesPage() {
 
   return (
     <>
+      <ClubTakesConfetti />
       <SiteHeader />
       <main className="pt-24 sm:pt-28">
         {/* Hero — toda la tarjeta (imagen + título) es un link directo al

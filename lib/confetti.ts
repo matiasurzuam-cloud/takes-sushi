@@ -14,3 +14,18 @@ export function celebrate() {
     zIndex: 200,
   })
 }
+
+// Dos cañones cruzados desde las esquinas inferiores — más festivo que
+// `celebrate()` (que es una sola ráfaga central), pensado para un momento
+// de "llegada" en vez de una confirmación puntual (ej. entrar a la página
+// del Club Takes).
+export function celebrateWelcome() {
+  const base = {
+    colors: ['#30c8cf', '#f26f27', '#ffffff'],
+    zIndex: 200,
+    startVelocity: 42,
+    spread: 65,
+  }
+  confetti({ ...base, particleCount: 60, origin: { x: 0.15, y: 0.75 }, angle: 60 })
+  confetti({ ...base, particleCount: 60, origin: { x: 0.85, y: 0.75 }, angle: 120 })
+}
