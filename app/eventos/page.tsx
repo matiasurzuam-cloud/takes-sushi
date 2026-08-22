@@ -5,6 +5,7 @@ import { SiteFooter } from '@/components/site-footer'
 import { FloatingSocial } from '@/components/floating-social'
 import { Reveal } from '@/components/reveal'
 import { EventoReservar } from '@/components/evento-reservar'
+import { EventosPasados } from '@/components/eventos-pasados'
 import { EmptyState } from '@/components/ui/empty-state'
 import { SmartImage } from '@/components/ui/smart-image'
 import { formatFechaEvento } from '@/lib/eventos/format'
@@ -181,26 +182,7 @@ export default async function EventosPage() {
                 </p>
               </Reveal>
 
-              <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                {pasados.map((evento, i) => (
-                  <Reveal key={evento.id} delay={i * 50}>
-                    <div className="group relative aspect-square overflow-hidden rounded-2xl">
-                      <SmartImage
-                        src={evento.imagen}
-                        alt={evento.titulo}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      />
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/10 to-transparent" />
-                      <div className="absolute inset-x-0 bottom-0 p-3">
-                        <p className="truncate text-sm font-bold text-white">{evento.titulo}</p>
-                        <p className="text-xs text-white/70">{formatFechaEvento(evento.fecha)}</p>
-                      </div>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
+              <EventosPasados eventos={pasados} />
             </div>
           </section>
         )}
