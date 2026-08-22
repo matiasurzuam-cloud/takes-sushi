@@ -76,6 +76,27 @@ export function GaleriaAdmin({ initialFotos }: GaleriaAdminProps) {
     setBusyId(null)
   }
 
+  async function handleReplace(foto: GaleriaFoto, e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    e.target.value = ''
+
+    setBusyId(foto.id)
+    setError(null)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await fetch(`/api/galeria/${foto.id}`, { method: 'PUT', body: formData })
+      const data = await res.json().catch(() => null)
+      if (!res.ok) throw new Error(data?.error ?? 'No se pudo cambiar la foto')
+      await refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo cambiar la foto')
+    } finally {
+      setBusyId(null)
+    }
+  }
+
   async function handleLogout() {
     await fetch('/api/admin/logout', { method: 'POST' })
     router.replace('/admin/login')
@@ -184,15 +205,38 @@ export function GaleriaAdmin({ initialFotos }: GaleriaAdminProps) {
             <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide text-white">
               {CATEGORIA_LABEL[foto.categoria]}
             </span>
-            <button
-              type="button"
-              onClick={() => handleDelete(foto)}
-              disabled={busyId === foto.id}
-              aria-label="Eliminar foto"
-              className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-destructive disabled:pointer-events-none disabled:opacity-50"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+            <div className="absolute right-2 top-2 flex gap-1.5">
+              <label
+                aria-label="Cambiar foto"
+                title="Cambiar foto"
+                className={cn(
+                  'inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-brand',
+                  busyId === foto.id && 'pointer-events-none opacity-50',
+                )}
+              >
+                {busyId === foto.id ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Upload className="h-4 w-4" />
+                )}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={(e) => handleReplace(foto, e)}
+                  disabled={busyId === foto.id}
+                  className="hidden"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => handleDelete(foto)}
+                disabled={busyId === foto.id}
+                aria-label="Eliminar foto"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-destructive disabled:pointer-events-none disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
             <p className="truncate bg-card p-2 text-xs text-muted-foreground">{foto.alt}</p>
           </div>
         ))}

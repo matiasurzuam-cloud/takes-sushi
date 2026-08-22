@@ -16,6 +16,7 @@ import { MAX_FOTOS, type CategoriaGaleria, type GaleriaFoto, type GaleriaFotoInp
 export interface GaleriaRepository {
   getAll(): Promise<GaleriaFoto[]>
   create(input: GaleriaFotoInput): Promise<GaleriaFoto>
+  updateImage(id: string, imagen: string): Promise<GaleriaFoto | null>
   remove(id: string): Promise<boolean>
 }
 
@@ -103,6 +104,30 @@ class SupabaseGaleriaRepository implements GaleriaRepository {
       .select()
       .single()
     if (error) throw error
+    return fromRow(data as GaleriaRow)
+  }
+
+  // Reemplaza solo la imagen de una foto existente (mantiene alt/categoría/
+  // orden). El archivo viejo en Storage se borra recién después de que el
+  // UPDATE de la fila confirme, para no quedar sin imagen si algo falla.
+  async updateImage(id: string, imagen: string) {
+    const { data: existing, error: fetchError } = await supabaseAdmin
+      .from(TABLE)
+      .select('imagen')
+      .eq('id', id)
+      .maybeSingle()
+    if (fetchError) throw fetchError
+    if (!existing) return null
+
+    const { data, error } = await supabaseAdmin
+      .from(TABLE)
+      .update({ imagen })
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw error
+
+    await removeFromStorage((existing as { imagen: string }).imagen)
     return fromRow(data as GaleriaRow)
   }
 

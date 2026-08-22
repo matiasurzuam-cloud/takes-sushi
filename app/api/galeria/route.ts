@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'node:crypto'
+import { revalidatePath } from 'next/cache'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { galeriaRepo } from '@/lib/galeria/store'
 import type { CategoriaGaleria } from '@/lib/galeria/types'
@@ -79,6 +80,9 @@ export async function POST(req: NextRequest) {
       alt: alt.trim(),
       categoria: categoria as CategoriaGaleria,
     })
+    // La home tiene `revalidate = 60` (ISR) — sin esto, la foto recién se
+    // vería reflejada hasta 1 minuto después en vez de al instante.
+    revalidatePath('/')
     return NextResponse.json(foto, { status: 201 })
   } catch {
     // Si falló guardar la fila, no dejar el archivo huérfano en Storage.
