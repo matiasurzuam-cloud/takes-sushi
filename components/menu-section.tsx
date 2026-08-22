@@ -1542,6 +1542,18 @@ export function MenuSection({
       window.removeEventListener(MENU_SELECT_CATEGORY_EVENT, onSelectCategoryEvent)
     }
   }, [])
+  // La barra de pedido flotante es `fixed inset-x-0 bottom-0`, así que si no
+  // se retira al llegar al final de la página termina tapando el footer
+  // (incluido el link "Admin"). Se observa el footer y se oculta la barra
+  // mientras esté visible en el viewport.
+  const [footerVisible, setFooterVisible] = useState(false)
+  useEffect(() => {
+    const footer = document.getElementById('site-footer')
+    if (!footer) return
+    const observer = new IntersectionObserver(([entry]) => setFooterVisible(entry.isIntersecting))
+    observer.observe(footer)
+    return () => observer.disconnect()
+  }, [])
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null)
   const [sectorId, setSectorId] = useState<string | null>(null)
   const [otroDetalle, setOtroDetalle] = useState('')
@@ -1729,7 +1741,12 @@ export function MenuSection({
 
       {/* Barra de pedido flotante */}
       {totalItems > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-4 sm:pb-4">
+        <div
+          className={cn(
+            'fixed inset-x-0 bottom-0 z-50 px-3 pb-3 transition-transform duration-300 sm:px-4 sm:pb-4',
+            footerVisible && 'pointer-events-none translate-y-full',
+          )}
+        >
           <div className="mx-auto flex max-w-3xl items-center gap-3 rounded-2xl border border-border bg-card/95 p-3 shadow-2xl shadow-black/20 backdrop-blur sm:gap-4 sm:p-4">
             <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-brand-foreground">
               <ShoppingBag className="h-5 w-5" />

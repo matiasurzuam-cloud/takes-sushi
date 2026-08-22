@@ -23,7 +23,7 @@ export function SiteFooter({ content }: { content: SiteContent }) {
   const { horario, redes } = content.contacto
 
   return (
-    <footer className="border-t border-border bg-foreground text-background">
+    <footer id="site-footer" className="border-t border-border bg-foreground text-background">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
@@ -113,6 +113,14 @@ export function SiteFooter({ content }: { content: SiteContent }) {
                   )}
                 </li>
               ))}
+              <li>
+                <a
+                  href="/admin/login"
+                  className="text-sm text-background/40 transition-colors hover:text-brand"
+                >
+                  Admin
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -138,17 +146,9 @@ export function SiteFooter({ content }: { content: SiteContent }) {
             © {new Date().getFullYear()} TAKE&apos;S Sushi &amp; Coffee. Todos los
             derechos reservados.
           </p>
-          <div className="flex items-center gap-4">
-            <p className="text-xs text-background/60">
-              Diseño web — listo para integrar pedidos y pagos.
-            </p>
-            <a
-              href="/admin/login"
-              className="text-xs text-background/40 underline-offset-2 transition-colors hover:text-background/70 hover:underline"
-            >
-              Admin
-            </a>
-          </div>
+          <p className="text-xs text-background/60">
+            Diseño web — listo para integrar pedidos y pagos.
+          </p>
         </div>
       </div>
     </footer>
